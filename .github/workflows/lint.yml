@@ -38,9 +38,10 @@ jobs:
             exit 1
           fi
 
-      # the version of staticcheck is pinned, so that a new release does not break the build.  It needs a recent go,
-      # the go command downloads it when it is needed.
+      # the version of staticcheck is pinned, so that a new release does not break the build.  setup-go sets
+      # GOTOOLCHAIN=local, so go never downloads a newer toolchain: the pinned version must not require a newer
+      # go than the one in go.mod.  v0.7.0 needs go 1.25.0, v0.8.x needs go 1.26.0.
       - name: go vet and staticcheck
         run: |
           go vet ./...
-          go run honnef.co/go/tools/cmd/staticcheck@v0.8.2 ./...
+          go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...
