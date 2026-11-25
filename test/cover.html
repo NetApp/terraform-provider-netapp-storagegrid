@@ -1,0 +1,3535 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>interfaces: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces/common.go (75.0%)</option>
+				
+				<option value="file1">github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces/grid_account.go (78.3%)</option>
+				
+				<option value="file2">github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces/grid_info.go (79.0%)</option>
+				
+				<option value="file3">github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces/grid_product_version.go (72.7%)</option>
+				
+				<option value="file4">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection/config.go (61.3%)</option>
+				
+				<option value="file5">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection/resource_and_data_source_helpers.go (7.7%)</option>
+				
+				<option value="file6">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/grid/grid_account_data_source.go (86.4%)</option>
+				
+				<option value="file7">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/grid/grid_account_resource.go (79.1%)</option>
+				
+				<option value="file8">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/grid/grid_accounts_data_source.go (82.4%)</option>
+				
+				<option value="file9">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/grid/grid_info_data_source.go (79.7%)</option>
+				
+				<option value="file10">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/grid/grid_product_version_data_source.go (75.9%)</option>
+				
+				<option value="file11">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/provider.go (63.2%)</option>
+				
+				<option value="file12">github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/provider_test_utils.go (81.8%)</option>
+				
+				<option value="file13">github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/httpclient/api_error.go (66.7%)</option>
+				
+				<option value="file14">github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/httpclient/http_client.go (62.5%)</option>
+				
+				<option value="file15">github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/httpclient/request.go (83.3%)</option>
+				
+				<option value="file16">github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/rest_client.go (78.8%)</option>
+				
+				<option value="file17">github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/rest_response.go (84.4%)</option>
+				
+				<option value="file18">github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/version.go (69.2%)</option>
+				
+				<option value="file19">github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils/error_handlers.go (61.5%)</option>
+				
+				<option value="file20">github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils/redact.go (81.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package interfaces
+
+import "github.com/mitchellh/mapstructure"
+
+// NameDataModel is the standard name/id pair that required by most resources
+type NameDataModel struct {
+        Name string
+        ID   string
+}
+
+// decode converts a decoded JSON object into a struct, or a struct into a map, using the mapstructure tags.
+// Types are converted when it is safe: the REST client keeps numbers as json.Number, and StorageGRID is not always
+// consistent between strings and numbers (eg account ids).
+func decode(input interface{}, output interface{}) error <span class="cov8" title="1">{
+        decoder, err := mapstructure.NewDecoder(&amp;mapstructure.DecoderConfig{
+                WeaklyTypedInput: true,
+                Result:           output,
+        })
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return decoder.Decode(input)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package interfaces
+
+import (
+        "fmt"
+        "regexp"
+        "sort"
+
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// gridAccountsAPI is the Grid Management API of the tenant accounts, relative to the version of the API.
+const gridAccountsAPI = "grid/accounts"
+
+var gridAccountIDRegexp = regexp.MustCompile(`^[0-9]+$`)
+
+// IsGridAccountID returns true if id looks like the id that StorageGRID assigns to a tenant account: a number of 20
+// digits.  The id is a part of the path of the requests, so anything else is not sent: a path like ../users/1 would
+// address another object.
+func IsGridAccountID(id string) bool <span class="cov8" title="1">{
+        return gridAccountIDRegexp.MatchString(id)
+}</span>
+
+// gridAccountPath returns the path of an account, and reports an error if id is not the id of an account.
+func gridAccountPath(errorHandler *utils.ErrorHandler, id string, suffix string) (string, error) <span class="cov8" title="1">{
+        if !IsGridAccountID(id) </span><span class="cov0" title="0">{
+                return "", errorHandler.MakeAndReportError("invalid grid_account id", fmt.Sprintf("%q is not the id of a grid_account, which is a number such as 12345678901234567890", id))
+        }</span>
+        <span class="cov8" title="1">return gridAccountsAPI + "/" + id + suffix, nil</span>
+}
+
+// GridAccountGetDataModel describes a tenant account returned by StorageGRID.
+// StorageGRID leaves out the fields that are not set, or sets them to null: they are nil.
+type GridAccountGetDataModel struct {
+        ID           string                        `mapstructure:"id"`
+        Name         string                        `mapstructure:"name"`
+        Description  *string                       `mapstructure:"description"`
+        Capabilities []string                      `mapstructure:"capabilities"`
+        Policy       GridAccountPolicyGetDataModel `mapstructure:"policy"`
+}
+
+// GridAccountPolicyGetDataModel describes the policy of a tenant account returned by StorageGRID.
+type GridAccountPolicyGetDataModel struct {
+        UseAccountIdentitySource *bool  `mapstructure:"useAccountIdentitySource"`
+        AllowPlatformServices    *bool  `mapstructure:"allowPlatformServices"`
+        AllowSelectObjectContent *bool  `mapstructure:"allowSelectObjectContent"`
+        AllowComplianceMode      *bool  `mapstructure:"allowComplianceMode"`
+        MaxRetentionDays         *int64 `mapstructure:"maxRetentionDays"`
+        QuotaObjectBytes         *int64 `mapstructure:"quotaObjectBytes"`
+}
+
+// GridAccountResourceBodyDataModel describes the configuration of a tenant account that the provider sends.
+type GridAccountResourceBodyDataModel struct {
+        Name         string
+        Description  *string
+        Capabilities []string
+        Policy       GridAccountPolicyBodyDataModel
+        // Password is the password of the root user of the tenant.  It is only sent when the account is created:
+        // ChangeGridAccountPassword changes it afterwards.
+        Password string
+        // GrantRootAccessToGroup is the federated group that has the root access permission of the tenant.
+        // It is only sent when the account is created.
+        GrantRootAccessToGroup string
+}
+
+// GridAccountPolicyBodyDataModel describes the policy of a tenant account that the provider sends.
+// The pointers are nil when the provider does not manage the setting: it is not sent on create, and the
+// value that StorageGRID has is sent back on update.  Only QuotaObjectBytes is always sent, nil is no quota.
+type GridAccountPolicyBodyDataModel struct {
+        UseAccountIdentitySource bool
+        AllowPlatformServices    bool
+        AllowSelectObjectContent *bool
+        AllowComplianceMode      *bool
+        MaxRetentionDays         *int64
+        QuotaObjectBytes         *int64
+}
+
+// GridAccountDataSourceFilterModel describes the filter of the data source that lists the tenant accounts.
+// StorageGRID has no generic query filter: the filter is applied on the list returned by the API.
+type GridAccountDataSourceFilterModel struct {
+        Name string `mapstructure:"name"`
+}
+
+// policyRequest builds the policy sent to StorageGRID.  current is the policy that StorageGRID has, if any.
+// The settings that the provider does not manage are kept, as the API may replace the whole policy.
+func (b GridAccountResourceBodyDataModel) policyRequest(current map[string]interface{}) map[string]interface{} <span class="cov8" title="1">{
+        policy := make(map[string]interface{}, len(current)+6)
+        for key, value := range current </span><span class="cov8" title="1">{
+                policy[key] = value
+        }</span>
+        <span class="cov8" title="1">policy["useAccountIdentitySource"] = b.Policy.UseAccountIdentitySource
+        policy["allowPlatformServices"] = b.Policy.AllowPlatformServices
+        if b.Policy.AllowSelectObjectContent != nil </span><span class="cov8" title="1">{
+                policy["allowSelectObjectContent"] = *b.Policy.AllowSelectObjectContent
+        }</span>
+        <span class="cov8" title="1">if b.Policy.AllowComplianceMode != nil </span><span class="cov8" title="1">{
+                policy["allowComplianceMode"] = *b.Policy.AllowComplianceMode
+        }</span>
+        <span class="cov8" title="1">if b.Policy.MaxRetentionDays != nil </span><span class="cov8" title="1">{
+                policy["maxRetentionDays"] = *b.Policy.MaxRetentionDays
+                if _, found := policy["maxRetentionYears"]; found </span><span class="cov8" title="1">{
+                        // the maximum retention period has a value and a unit: days or years, not both
+                        policy["maxRetentionYears"] = nil
+                }</span>
+        }
+        <span class="cov8" title="1">if b.Policy.QuotaObjectBytes != nil </span><span class="cov8" title="1">{
+                policy["quotaObjectBytes"] = *b.Policy.QuotaObjectBytes
+        }</span> else<span class="cov8" title="1"> {
+                // null is no quota
+                policy["quotaObjectBytes"] = nil
+        }</span>
+        <span class="cov8" title="1">return policy</span>
+}
+
+// request builds the body that is common to the creation and to the update of an account.
+func (b GridAccountResourceBodyDataModel) request(currentPolicy map[string]interface{}) map[string]interface{} <span class="cov8" title="1">{
+        capabilities := append([]string{}, b.Capabilities...)
+        sort.Strings(capabilities)
+        body := map[string]interface{}{
+                "name":         b.Name,
+                "capabilities": capabilities,
+                "policy":       b.policyRequest(currentPolicy),
+        }
+        if b.Description != nil </span><span class="cov8" title="1">{
+                body["description"] = *b.Description
+        }</span>
+        <span class="cov8" title="1">return body</span>
+}
+
+// createRequest builds the body of the creation of an account.
+func (b GridAccountResourceBodyDataModel) createRequest() map[string]interface{} <span class="cov8" title="1">{
+        body := b.request(nil)
+        if b.Password != "" </span><span class="cov8" title="1">{
+                body["password"] = b.Password
+        }</span>
+        <span class="cov8" title="1">if b.GrantRootAccessToGroup != "" </span><span class="cov0" title="0">{
+                body["grantRootAccessToGroup"] = b.GrantRootAccessToGroup
+        }</span>
+        <span class="cov8" title="1">return body</span>
+}
+
+// updateRequest builds the body of the update of an account.  current is the account that StorageGRID has.
+//
+// The PUT replaces the whole account, so everything that the provider does not manage is sent back as it is: the rules
+// that synchronize the account with the other grids, the grid federation connections that the tenant can use, ...
+// What StorageGRID assigns (the id), and what is only used when the account is created (the password and the group that
+// has the root access), is not sent.
+func (b GridAccountResourceBodyDataModel) updateRequest(current map[string]interface{}) map[string]interface{} <span class="cov8" title="1">{
+        body := make(map[string]interface{}, len(current)+4)
+        for key, value := range current </span><span class="cov8" title="1">{
+                body[key] = value
+        }</span>
+        <span class="cov8" title="1">for _, key := range []string{"id", "accountReplica", "password", "grantRootAccessToGroup"} </span><span class="cov8" title="1">{
+                delete(body, key)
+        }</span>
+        <span class="cov8" title="1">currentPolicy, _ := current["policy"].(map[string]interface{})
+        for key, value := range b.request(currentPolicy) </span><span class="cov8" title="1">{
+                body[key] = value
+        }</span>
+        <span class="cov8" title="1">if b.Description == nil </span><span class="cov8" title="1">{
+                // the description was removed
+                delete(body, "description")
+        }</span>
+        <span class="cov8" title="1">return body</span>
+}
+
+// GetGridAccountByID to get grid_account info.  It returns nil, with no error, if the grid_account does not exist.
+func GetGridAccountByID(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string) (*GridAccountGetDataModel, error) <span class="cov8" title="1">{
+        api, err := gridAccountPath(errorHandler, id, "")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">statusCode, response, err := r.GetNilOrObject(api, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error reading grid_account info", fmt.Sprintf("error on GET %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+        <span class="cov8" title="1">if response == nil </span><span class="cov8" title="1">{
+                return nil, nil
+        }</span>
+
+        <span class="cov8" title="1">var data GridAccountGetDataModel
+        if err := decode(response, &amp;data); err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from GET %s", api),
+                        fmt.Sprintf("error: %s, statusCode %d, response %#v", err, statusCode, response))
+        }</span>
+        <span class="cov8" title="1">tflog.Debug(errorHandler.Ctx, fmt.Sprintf("Read grid_account: %#v", data))
+        return &amp;data, nil</span>
+}
+
+// GetGridAccountByName to get grid_account info.  An error is reported unless exactly one grid_account has this name.
+func GetGridAccountByName(errorHandler *utils.ErrorHandler, r *restclient.RestClient, name string) (*GridAccountGetDataModel, error) <span class="cov8" title="1">{
+        found, err := GetAllGridAccount(errorHandler, r, &amp;GridAccountDataSourceFilterModel{Name: name})
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">switch len(found) </span>{
+        case 0:<span class="cov8" title="1">
+                return nil, errorHandler.MakeAndReportError("grid_account not found", fmt.Sprintf("no grid_account with name %q", name))</span>
+        case 1:<span class="cov8" title="1">
+                return &amp;found[0], nil</span>
+        }
+        <span class="cov0" title="0">return nil, errorHandler.MakeAndReportError("grid_account is not unique", fmt.Sprintf("%d grid_account have the name %q", len(found), name))</span>
+}
+
+// GetAllGridAccount to get grid_account info for all the grid_accounts matching a filter
+func GetAllGridAccount(errorHandler *utils.ErrorHandler, r *restclient.RestClient, filter *GridAccountDataSourceFilterModel) ([]GridAccountGetDataModel, error) <span class="cov8" title="1">{
+        api := gridAccountsAPI
+        // GetAllObjects follows the pagination of the API (limit and marker)
+        statusCode, response, err := r.GetAllObjects(api, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error reading grid_accounts info", fmt.Sprintf("error on GET %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+
+        <span class="cov8" title="1">var data []GridAccountGetDataModel
+        for _, info := range response </span><span class="cov8" title="1">{
+                var record GridAccountGetDataModel
+                if err := decode(info, &amp;record); err != nil </span><span class="cov0" title="0">{
+                        return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from GET %s", api),
+                                fmt.Sprintf("error: %s, statusCode %d, info %#v", err, statusCode, info))
+                }</span>
+                <span class="cov8" title="1">if filter != nil &amp;&amp; filter.Name != "" &amp;&amp; record.Name != filter.Name </span><span class="cov8" title="1">{
+                        continue</span>
+                }
+                <span class="cov8" title="1">data = append(data, record)</span>
+        }
+        <span class="cov8" title="1">tflog.Debug(errorHandler.Ctx, fmt.Sprintf("Read grid_accounts: %#v", data))
+        return data, nil</span>
+}
+
+// CreateGridAccount to create grid_account.  StorageGRID returns the new account, with its id.
+func CreateGridAccount(errorHandler *utils.ErrorHandler, r *restclient.RestClient, body GridAccountResourceBodyDataModel) (*GridAccountGetDataModel, error) <span class="cov8" title="1">{
+        api := gridAccountsAPI
+        statusCode, response, err := r.CallCreateMethod(api, nil, body.createRequest())
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error creating grid_account", fmt.Sprintf("error on POST %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+        <span class="cov8" title="1">created, err := decodeGridAccountResponse(errorHandler, "POST", api, statusCode, response)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">if created.ID == "" </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error creating grid_account",
+                        fmt.Sprintf("StorageGRID did not return the id of the account created by POST %s, statusCode %d: check if it exists", api, statusCode))
+        }</span>
+        <span class="cov8" title="1">return created, nil</span>
+}
+
+// UpdateGridAccount to update grid_account.  StorageGRID replaces the configuration of the account with the body of
+// the PUT: the account is read first, and what the provider does not manage is sent back.
+func UpdateGridAccount(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string, body GridAccountResourceBodyDataModel) (*GridAccountGetDataModel, error) <span class="cov8" title="1">{
+        api, err := gridAccountPath(errorHandler, id, "")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">statusCode, current, err := r.GetNilOrObject(api, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error reading grid_account before the update", fmt.Sprintf("error on GET %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+        <span class="cov8" title="1">if current == nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("grid_account not found", fmt.Sprintf("the grid_account %s does not exist anymore, run terraform plan to refresh the state", id))
+        }</span>
+
+        <span class="cov8" title="1">statusCode, response, err := r.CallUpdateMethod(api, nil, body.updateRequest(current))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error updating grid_account", fmt.Sprintf("error on PUT %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+        <span class="cov8" title="1">if _, ok := response.Object(); !ok </span><span class="cov0" title="0">{
+                // the account is not in the response: read it
+                updated, err := GetGridAccountByID(errorHandler, r, id)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">if updated == nil </span><span class="cov0" title="0">{
+                        return nil, errorHandler.MakeAndReportError("grid_account not found", fmt.Sprintf("the grid_account %s does not exist anymore, run terraform plan to refresh the state", id))
+                }</span>
+                <span class="cov0" title="0">return updated, nil</span>
+        }
+        <span class="cov8" title="1">return decodeGridAccountResponse(errorHandler, "PUT", api, statusCode, response)</span>
+}
+
+// ChangeGridAccountPassword to change the password of the root user of the tenant of grid_account.
+func ChangeGridAccountPassword(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string, password string) error <span class="cov8" title="1">{
+        api, err := gridAccountPath(errorHandler, id, "/change-password")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">statusCode, _, err := r.CallCreateMethod(api, nil, map[string]interface{}{"password": password})
+        if err != nil </span><span class="cov0" title="0">{
+                return errorHandler.MakeAndReportError("error changing the password of grid_account", fmt.Sprintf("error on POST %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// DeleteGridAccount to delete grid_account.  It is not an error if the grid_account is already gone.
+func DeleteGridAccount(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string) error <span class="cov8" title="1">{
+        api, err := gridAccountPath(errorHandler, id, "")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">statusCode, _, err := r.CallDeleteMethod(api, nil, nil)
+        if err != nil &amp;&amp; !restclient.IsNotFound(err) </span><span class="cov0" title="0">{
+                return errorHandler.MakeAndReportError("error deleting grid_account", fmt.Sprintf("error on DELETE %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// decodeGridAccountResponse reads the account returned by a POST or a PUT.
+func decodeGridAccountResponse(errorHandler *utils.ErrorHandler, method string, api string, statusCode int, response restclient.RestResponse) (*GridAccountGetDataModel, error) <span class="cov8" title="1">{
+        object, ok := response.Object()
+        if !ok </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError(fmt.Sprintf("unexpected response from %s %s", method, api),
+                        fmt.Sprintf("expected an object, statusCode %d, response %#v", statusCode, response.Data))
+        }</span>
+        <span class="cov8" title="1">var data GridAccountGetDataModel
+        if err := decode(object, &amp;data); err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from %s %s", method, api),
+                        fmt.Sprintf("error: %s, statusCode %d, response %#v", err, statusCode, object))
+        }</span>
+        <span class="cov8" title="1">tflog.Debug(errorHandler.Ctx, fmt.Sprintf("%s %s: %#v", method, api, data))
+        return &amp;data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package interfaces
+
+import (
+        "bytes"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "net/http"
+        "sort"
+        "strings"
+
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// GridInfoAll is the name of the subset that is all the subsets.
+const GridInfoAll = "all"
+
+// GridInfoSubset is a piece of information about the grid: the data of a GET of the Grid Management API.
+type GridInfoSubset struct {
+        // Name is the REST API of the subset, as the Ansible module netapp.storagegrid.na_sg_grid_info names it, eg grid/accounts.
+        // It is the key of the information that is returned.
+        Name string
+        // InfoName is the other name that the Ansible module accepts for the subset, eg grid_accounts_info.
+        InfoName string
+        // API is the path that is read, relative to the version of the API.  Some of them are in the private API of StorageGRID,
+        // which is not documented and can change without notice.
+        API string
+}
+
+// gridInfoSubsets are the subsets of the Ansible module netapp.storagegrid.na_sg_grid_info.
+var gridInfoSubsets = []GridInfoSubset{
+        {"grid/accounts", "grid_accounts_info", "grid/accounts"},
+        {"grid/admin-proxy", "grid_admin_proxy_info", "private/admin-proxy"},
+        {"grid/alarms", "grid_alarms_info", "grid/alarms"},
+        {"grid/audit", "grid_audit_info", "grid/audit"},
+        {"grid/audit-destinations", "grid_audit_destinations_info", "private/audit-destinations"},
+        {"grid/autosupport", "grid_autosupport_info", "private/autosupport"},
+        {"grid/compliance-global", "grid_compliance_global_info", "grid/compliance-global"},
+        {"grid/config", "grid_config_info", "grid/config"},
+        {"grid/config/management", "grid_config_management_info", "grid/config/management"},
+        {"grid/config/product-version", "grid_config_product_version_info", "grid/config/product-version"},
+        {"grid/deactivated-features", "grid_deactivated_features_info", "grid/deactivated-features"},
+        {"grid/dns-servers", "grid_dns_servers_info", "grid/dns-servers"},
+        {"grid/domain-names", "grid_domain_names_info", "grid/domain-names"},
+        {"grid/ec-profiles", "grid_ec_profiles_info", "grid/ec-profiles"},
+        {"grid/expansion", "grid_expansion_info", "grid/expansion"},
+        {"grid/expansion/nodes", "grid_expansion_nodes_info", "grid/expansion/nodes"},
+        {"grid/expansion/sites", "grid_expansion_sites_info", "grid/expansion/sites"},
+        {"grid/firewall-blocked-ports", "grid_firewall_blocked_ports", "private/firewall-blocked-ports"},
+        {"grid/firewall-external-ports", "grid_firewall_external_ports", "private/firewall-external-ports"},
+        {"grid/firewall-privileged-ips", "grid_firewall_privileged_ips", "private/firewall-privileged-ips"},
+        {"grid/gateway-configs", "grid_load_balancer_endpoints_config_info", "private/gateway-configs"},
+        {"grid/grid-networks", "grid_grid_networks_info", "grid/grid-networks"},
+        {"grid/groups", "grid_groups_info", "grid/groups"},
+        {"grid/ha-groups", "grid_ha_groups_info", "private/ha-groups"},
+        {"grid/health", "grid_health_info", "grid/health"},
+        {"grid/health/topology", "grid_health_topology_info", "grid/health/topology"},
+        {"grid/identity-source", "grid_identity_source_info", "grid/identity-source"},
+        {"grid/ilm-criteria", "grid_ilm_criteria_info", "grid/ilm-criteria"},
+        {"grid/ilm-grade-site", "grid_ilm_grade_site_info", "private/ilm-grade-site"},
+        {"grid/ilm-grades", "grid_ilm_grades_info", "private/ilm-grades"},
+        {"grid/ilm-policies", "grid_ilm_policies_info", "grid/ilm-policies"},
+        {"grid/ilm-pools", "grid_ilm_storage_pools_info", "private/ilm-pools"},
+        {"grid/ilm-rules", "grid_ilm_rules_info", "grid/ilm-rules"},
+        {"grid/license", "grid_license_info", "grid/license"},
+        {"grid/management-certificate", "grid_management_certificate_info", "grid/management-certificate"},
+        {"grid/network-topology", "grid_network_topology_info", "private/network-topology"},
+        {"grid/node-health", "grid_node_health_info", "grid/node-health"},
+        {"grid/ntp-servers", "grid_ntp_servers_info", "grid/ntp-servers"},
+        {"grid/recovery", "grid_recovery_info", "grid/recovery"},
+        {"grid/recovery/available-nodes", "grid_recovery_available_nodes_info", "grid/recovery/available-nodes"},
+        {"grid/regions", "grid_regions_info", "grid/regions"},
+        {"grid/schemes", "grid_schemes_info", "grid/schemes"},
+        {"grid/single-sign-on", "grid_single_sign_on_info", "private/single-sign-on"},
+        {"grid/snmp", "grid_snmp_info", "grid/snmp"},
+        {"grid/storage-api-certificate", "grid_storage_api_certificate_info", "grid/storage-api-certificate"},
+        {"grid/storage-proxy", "grid_storage_proxy_info", "private/storage-proxy"},
+        {"grid/untrusted-client-network", "grid_untrusted_client_network_info", "grid/untrusted-client-network"},
+        {"grid/users", "grid_users_info", "grid/users"},
+        {"grid/users/root", "grid_users_root_info", "grid/users/root"},
+        {"grid/versions", "versions_info", "versions"},
+        {"grid/vlan-interfaces", "grid_vlan_interfaces_info", "private/vlan-interfaces"},
+}
+
+// gridInfoAliases are other names of a subset that the Ansible module accepts.
+var gridInfoAliases = map[string]string{
+        "versions": "grid/versions",
+}
+
+// GridInfoSubsets returns all the subsets, sorted by name.
+func GridInfoSubsets() []GridInfoSubset <span class="cov8" title="1">{
+        subsets := append([]GridInfoSubset(nil), gridInfoSubsets...)
+        sort.Slice(subsets, func(i, j int) bool </span><span class="cov8" title="1">{ return subsets[i].Name &lt; subsets[j].Name }</span>)
+        <span class="cov8" title="1">return subsets</span>
+}
+
+// GridInfoSubsetNames returns all the names that are accepted to select a subset, sorted: all, and the two names of each subset.
+func GridInfoSubsetNames() []string <span class="cov8" title="1">{
+        names := []string{GridInfoAll}
+        for _, subset := range gridInfoSubsets </span><span class="cov8" title="1">{
+                names = append(names, subset.Name, subset.InfoName)
+        }</span>
+        <span class="cov8" title="1">for alias := range gridInfoAliases </span><span class="cov8" title="1">{
+                names = append(names, alias)
+        }</span>
+        <span class="cov8" title="1">sort.Strings(names)
+        return names</span>
+}
+
+// ResolveGridInfoSubsets returns the subsets that the names select, without duplicates, sorted by name.  All the subsets
+// are selected by "all", and when there is no name.  An error lists the names that are not known.
+func ResolveGridInfoSubsets(requested []string) ([]GridInfoSubset, error) <span class="cov8" title="1">{
+        if len(requested) == 0 </span><span class="cov8" title="1">{
+                requested = []string{GridInfoAll}
+        }</span>
+        <span class="cov8" title="1">byName := make(map[string]GridInfoSubset, 2*len(gridInfoSubsets))
+        for _, subset := range gridInfoSubsets </span><span class="cov8" title="1">{
+                byName[subset.Name] = subset
+                byName[subset.InfoName] = subset
+        }</span>
+        <span class="cov8" title="1">for alias, name := range gridInfoAliases </span><span class="cov8" title="1">{
+                byName[alias] = byName[name]
+        }</span>
+
+        <span class="cov8" title="1">selected := map[string]GridInfoSubset{}
+        var unknown []string
+        for _, name := range requested </span><span class="cov8" title="1">{
+                if name == GridInfoAll </span><span class="cov8" title="1">{
+                        for _, subset := range gridInfoSubsets </span><span class="cov8" title="1">{
+                                selected[subset.Name] = subset
+                        }</span>
+                        <span class="cov8" title="1">continue</span>
+                }
+                <span class="cov8" title="1">subset, found := byName[name]
+                if !found </span><span class="cov0" title="0">{
+                        unknown = append(unknown, name)
+                        continue</span>
+                }
+                <span class="cov8" title="1">selected[subset.Name] = subset</span>
+        }
+        <span class="cov8" title="1">if len(unknown) &gt; 0 </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("unknown subsets: %s. A subset is %s, or the name of a REST API or an info name, for example grid/accounts or grid_accounts_info",
+                        strings.Join(unknown, ", "), GridInfoAll)
+        }</span>
+        <span class="cov8" title="1">subsets := make([]GridInfoSubset, 0, len(selected))
+        for _, subset := range selected </span><span class="cov8" title="1">{
+                subsets = append(subsets, subset)
+        }</span>
+        <span class="cov8" title="1">sort.Slice(subsets, func(i, j int) bool </span><span class="cov8" title="1">{ return subsets[i].Name &lt; subsets[j].Name }</span>)
+        <span class="cov8" title="1">return subsets, nil</span>
+}
+
+// GridInfoResult is what was read for a subset.
+type GridInfoResult struct {
+        Subset GridInfoSubset
+        // JSON is the data of the response, as JSON.  Sensitive values are masked, and the keys are sorted: it is the same
+        // text whenever the data is the same.
+        JSON       string
+        StatusCode int
+        Err        error
+}
+
+// IsSkippable returns true if the subset could not be read for a reason that is not a mistake of the request: the user
+// is not allowed to read it, or this release of StorageGRID does not have it.
+func (r GridInfoResult) IsSkippable() bool <span class="cov0" title="0">{
+        var apiErr *restclient.APIError
+        if !errors.As(r.Err, &amp;apiErr) </span><span class="cov0" title="0">{
+                return false
+        }</span>
+        <span class="cov0" title="0">switch apiErr.StatusCode </span>{
+        case http.StatusForbidden, http.StatusNotFound, http.StatusMethodNotAllowed, http.StatusNotImplemented:<span class="cov0" title="0">
+                return true</span>
+        }
+        <span class="cov0" title="0">return false</span>
+}
+
+// FetchGridInfo reads a subset.  parameters are added to the request, for instance limit.  The error is returned in the
+// result and is not reported to Terraform, so that it can be called from several goroutines.
+func FetchGridInfo(r *restclient.RestClient, subset GridInfoSubset, parameters map[string]string) GridInfoResult <span class="cov8" title="1">{
+        result := GridInfoResult{Subset: subset}
+        query := r.NewQuery()
+        for name, value := range parameters </span><span class="cov8" title="1">{
+                query.Set(name, value)
+        }</span>
+        <span class="cov8" title="1">statusCode, data, err := r.GetData(subset.API, query)
+        result.StatusCode = statusCode
+        if err != nil </span><span class="cov0" title="0">{
+                result.Err = err
+                return result
+        }</span>
+        // the encoder keeps &lt; &gt; &amp; as they are, and the encoding of a map has its keys sorted
+        <span class="cov8" title="1">var encoded bytes.Buffer
+        encoder := json.NewEncoder(&amp;encoded)
+        encoder.SetEscapeHTML(false)
+        if err := encoder.Encode(utils.RedactSensitive(data)); err != nil </span><span class="cov0" title="0">{
+                result.Err = fmt.Errorf("unable to encode the response of GET %s: %w", subset.API, err)
+                return result
+        }</span>
+        <span class="cov8" title="1">result.JSON = strings.TrimSuffix(encoded.String(), "\n")
+        return result</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package interfaces
+
+import (
+        "fmt"
+
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// GridProductVersionGetDataModel describes the GET data model using go types for mapping.
+type GridProductVersionGetDataModel struct {
+        ProductVersion string `mapstructure:"productVersion"`
+}
+
+// GetGridProductVersion to get the StorageGRID software version
+func GetGridProductVersion(errorHandler *utils.ErrorHandler, r *restclient.RestClient) (*GridProductVersionGetDataModel, error) <span class="cov8" title="1">{
+        api := "grid/config/product-version"
+        statusCode, response, err := r.GetNilOrObject(api, nil)
+        if err == nil &amp;&amp; response == nil </span><span class="cov0" title="0">{
+                err = fmt.Errorf("no response for GET %s", api)
+        }</span>
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("error reading grid product version", fmt.Sprintf("error on GET %s: %s, statusCode %d", api, err, statusCode))
+        }</span>
+
+        <span class="cov8" title="1">var data GridProductVersionGetDataModel
+        if err := decode(response, &amp;data); err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from GET %s", api),
+                        fmt.Sprintf("error: %s, statusCode %d, response %#v", err, statusCode, response))
+        }</span>
+        <span class="cov8" title="1">tflog.Debug(errorHandler.Ctx, fmt.Sprintf("Read grid_product_version data source: %#v", data))
+        return &amp;data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package connection
+
+import (
+        "fmt"
+        "sort"
+        "strings"
+        "sync"
+
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// Profile describes how to reach and sign in to a grid, or to a tenant of a grid.
+type Profile struct {
+        Hostname  string
+        Username  string
+        Password  string
+        AccountID string
+        // ValidateCerts is true by default
+        ValidateCerts         bool
+        CACertFile            string
+        APIVersion            string
+        MaxConcurrentRequests int
+}
+
+// Config is created by the provider configure method.
+// It is shared by all the resources and data sources, and must be used through a pointer.
+type Config struct {
+        ConnectionProfiles map[string]Profile
+        Version            string
+
+        mu      sync.Mutex
+        clients map[string]*restclient.RestClient
+}
+
+// GetConnectionProfile retrieves a connection profile based on name
+// If name is empty and only one profile is defined, it is returned
+func (c *Config) GetConnectionProfile(name string) (string, *Profile, error) <span class="cov8" title="1">{
+        if c == nil </span><span class="cov0" title="0">{
+                return "", nil, fmt.Errorf("internal error, config is not initialized")
+        }</span>
+        <span class="cov8" title="1">if len(c.ConnectionProfiles) == 0 </span><span class="cov0" title="0">{
+                return "", nil, fmt.Errorf("error, at least one connection profile is required to connect to StorageGRID")
+        }</span>
+        <span class="cov8" title="1">if name == "" &amp;&amp; len(c.ConnectionProfiles) == 1 </span><span class="cov0" title="0">{
+                for onlyName := range c.ConnectionProfiles </span><span class="cov0" title="0">{
+                        name = onlyName
+                }</span>
+        }
+        <span class="cov8" title="1">if name == "" </span><span class="cov0" title="0">{
+                names := make([]string, 0, len(c.ConnectionProfiles))
+                for profileName := range c.ConnectionProfiles </span><span class="cov0" title="0">{
+                        names = append(names, profileName)
+                }</span>
+                <span class="cov0" title="0">sort.Strings(names)
+                return "", nil, fmt.Errorf("error, connection profile name is required if more than one profile is defined: %s", strings.Join(names, ", "))</span>
+        }
+        <span class="cov8" title="1">if profile, ok := c.ConnectionProfiles[name]; ok </span><span class="cov8" title="1">{
+                return name, &amp;profile, nil
+        }</span>
+        <span class="cov0" title="0">return "", nil, fmt.Errorf("connection profile with name %s is not defined", name)</span>
+}
+
+// NewClient returns the REST client of the connection profile identified by cxProfileName.
+//
+// There is a single client per profile.  It signs in once, and its token is used by every resource and data source
+// that refers to the profile, instead of signing in for each call.  The returned client logs with the context of
+// the error handler.
+func (c *Config) NewClient(errorHandler *utils.ErrorHandler, cxProfileName string) (*restclient.RestClient, error) <span class="cov8" title="1">{
+        name, profile, err := c.GetConnectionProfile(cxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("failed to set connection profile", err.Error())
+        }</span>
+
+        <span class="cov8" title="1">c.mu.Lock()
+        defer c.mu.Unlock()
+        if client, ok := c.clients[name]; ok </span><span class="cov8" title="1">{
+                return client.WithContext(errorHandler.Ctx), nil
+        }</span>
+
+        // the tag is sent as the User-Agent, and used for telemetry
+        <span class="cov8" title="1">tag := strings.Join([]string{"TerraformStorageGRID", c.Version}, "/")
+        client, err := restclient.NewClient(errorHandler.Ctx, restclient.ConnectionProfile{
+                Hostname:              profile.Hostname,
+                Username:              profile.Username,
+                Password:              profile.Password,
+                AccountID:             profile.AccountID,
+                ValidateCerts:         profile.ValidateCerts,
+                CACertFile:            profile.CACertFile,
+                APIVersion:            profile.APIVersion,
+                MaxConcurrentRequests: profile.MaxConcurrentRequests,
+        }, tag)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errorHandler.MakeAndReportError("unable to create REST client",
+                        fmt.Sprintf("error creating REST client for connection profile %s: %s", name, err))
+        }</span>
+        <span class="cov8" title="1">if c.clients == nil </span><span class="cov8" title="1">{
+                c.clients = map[string]*restclient.RestClient{}
+        }</span>
+        <span class="cov8" title="1">c.clients[name] = client
+        return client, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package connection
+
+import (
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// ResourceOrDataSourceConfig is a struct that holds the provider config and the name of the resource or data source
+type ResourceOrDataSourceConfig struct {
+        ProviderConfig *Config
+        Name           string
+}
+
+// GetRestClient returns the client of the connection profile.  We cannot get it when the resource or data source
+// is configured, as the profile name is an attribute that we only know when we read the plan or the state.
+// Errors are reported with the error handler.
+func GetRestClient(errorHandler *utils.ErrorHandler, config ResourceOrDataSourceConfig, cxProfileName types.String) (*restclient.RestClient, error) <span class="cov8" title="1">{
+        return config.ProviderConfig.NewClient(errorHandler, cxProfileName.ValueString())
+}</span>
+
+// FlattenTypesInt64List Flatten a list of int64 values
+func FlattenTypesInt64List(clist []int64) []types.Int64 <span class="cov0" title="0">{
+        if len(clist) == 0 </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">values := make([]types.Int64, len(clist))
+        for index, record := range clist </span><span class="cov0" title="0">{
+                values[index] = types.Int64Value(record)
+        }</span>
+
+        <span class="cov0" title="0">return values</span>
+}
+
+// FlattenTypesStringList Flatten a list of string values
+func FlattenTypesStringList(terraformStringsList []string) []types.String <span class="cov0" title="0">{
+        if len(terraformStringsList) == 0 </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">stringsList := make([]types.String, len(terraformStringsList))
+        for index, record := range terraformStringsList </span><span class="cov0" title="0">{
+                stringsList[index] = types.StringValue(record)
+        }</span>
+
+        <span class="cov0" title="0">return stringsList</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package grid
+
+import (
+        "context"
+        "fmt"
+        "regexp"
+
+        "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+        "github.com/hashicorp/terraform-plugin-framework/datasource"
+        "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+        "github.com/hashicorp/terraform-plugin-framework/diag"
+        "github.com/hashicorp/terraform-plugin-framework/path"
+        "github.com/hashicorp/terraform-plugin-framework/schema/validator"
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// gridAccountIDFormat is the format of the id of a tenant account: a number
+var gridAccountIDFormat = regexp.MustCompile(`^[0-9]+$`)
+
+// Ensure provider defined types fully satisfy framework interfaces
+var _ datasource.DataSource = &amp;GridAccountDataSource{}
+
+// NewGridAccountDataSource is a helper function to simplify the provider implementation.
+func NewGridAccountDataSource() datasource.DataSource <span class="cov8" title="1">{
+        return &amp;GridAccountDataSource{
+                config: connection.ResourceOrDataSourceConfig{
+                        Name: "grid_account",
+                },
+        }
+}</span>
+
+// GridAccountDataSource defines the data source implementation.
+type GridAccountDataSource struct {
+        config connection.ResourceOrDataSourceConfig
+}
+
+// GridAccountDataSourceModel describes the data source data model.
+type GridAccountDataSourceModel struct {
+        CxProfileName            types.String `tfsdk:"cx_profile_name"`
+        ID                       types.String `tfsdk:"id"`
+        Name                     types.String `tfsdk:"name"`
+        Description              types.String `tfsdk:"description"`
+        Capabilities             types.Set    `tfsdk:"capabilities"`
+        UseAccountIdentitySource types.Bool   `tfsdk:"use_account_identity_source"`
+        AllowPlatformServices    types.Bool   `tfsdk:"allow_platform_services"`
+        AllowSelectObjectContent types.Bool   `tfsdk:"allow_select_object_content"`
+        AllowComplianceMode      types.Bool   `tfsdk:"allow_compliance_mode"`
+        MaxRetentionDays         types.Int64  `tfsdk:"max_retention_days"`
+        QuotaObjectBytes         types.Int64  `tfsdk:"quota_object_bytes"`
+}
+
+// GridAccountDataSourceItemModel describes a tenant account, as the data sources return it.
+// It has the attributes of GridAccountDataSourceModel, without the connection profile.
+type GridAccountDataSourceItemModel struct {
+        ID                       types.String `tfsdk:"id"`
+        Name                     types.String `tfsdk:"name"`
+        Description              types.String `tfsdk:"description"`
+        Capabilities             types.Set    `tfsdk:"capabilities"`
+        UseAccountIdentitySource types.Bool   `tfsdk:"use_account_identity_source"`
+        AllowPlatformServices    types.Bool   `tfsdk:"allow_platform_services"`
+        AllowSelectObjectContent types.Bool   `tfsdk:"allow_select_object_content"`
+        AllowComplianceMode      types.Bool   `tfsdk:"allow_compliance_mode"`
+        MaxRetentionDays         types.Int64  `tfsdk:"max_retention_days"`
+        QuotaObjectBytes         types.Int64  `tfsdk:"quota_object_bytes"`
+}
+
+// newGridAccountDataSourceItem converts a tenant account returned by StorageGRID.  What StorageGRID does not return is null.
+func newGridAccountDataSourceItem(ctx context.Context, account *interfaces.GridAccountGetDataModel, diags *diag.Diagnostics) GridAccountDataSourceItemModel <span class="cov8" title="1">{
+        item := GridAccountDataSourceItemModel{
+                ID:                       types.StringValue(account.ID),
+                Name:                     types.StringValue(account.Name),
+                Description:              types.StringPointerValue(account.Description),
+                UseAccountIdentitySource: types.BoolPointerValue(account.Policy.UseAccountIdentitySource),
+                AllowPlatformServices:    types.BoolPointerValue(account.Policy.AllowPlatformServices),
+                AllowSelectObjectContent: types.BoolPointerValue(account.Policy.AllowSelectObjectContent),
+                AllowComplianceMode:      types.BoolPointerValue(account.Policy.AllowComplianceMode),
+                MaxRetentionDays:         types.Int64PointerValue(account.Policy.MaxRetentionDays),
+                QuotaObjectBytes:         types.Int64PointerValue(account.Policy.QuotaObjectBytes),
+        }
+        if account.Description != nil &amp;&amp; *account.Description == "" </span><span class="cov0" title="0">{
+                // an empty description is not a description
+                item.Description = types.StringNull()
+        }</span>
+        <span class="cov8" title="1">capabilities := account.Capabilities
+        if capabilities == nil </span><span class="cov0" title="0">{
+                capabilities = []string{}
+        }</span>
+        <span class="cov8" title="1">set, setDiags := types.SetValueFrom(ctx, types.StringType, capabilities)
+        diags.Append(setDiags...)
+        item.Capabilities = set
+        return item</span>
+}
+
+// gridAccountDataSourceAttributes returns the attributes that describe a tenant account, in both data sources.
+func gridAccountDataSourceAttributes() map[string]schema.Attribute <span class="cov8" title="1">{
+        return map[string]schema.Attribute{
+                "description": schema.StringAttribute{
+                        MarkdownDescription: "Additional information that identifies the tenant account. It is not set when there is none.",
+                        Computed:            true,
+                },
+                "capabilities": schema.SetAttribute{
+                        MarkdownDescription: "Capabilities of the tenant account: `s3`, the object storage protocol, and `management`, which users need to sign in to the Tenant Manager and to use the Tenant Management API.",
+                        ElementType:         types.StringType,
+                        Computed:            true,
+                },
+                "use_account_identity_source": schema.BoolAttribute{
+                        MarkdownDescription: "Whether the tenant uses its own identity source (`true`), or the identity source of the grid (`false`).",
+                        Computed:            true,
+                },
+                "allow_platform_services": schema.BoolAttribute{
+                        MarkdownDescription: "Whether the tenant can use the platform services, such as CloudMirror replication, notifications and search integration.",
+                        Computed:            true,
+                },
+                "allow_select_object_content": schema.BoolAttribute{
+                        MarkdownDescription: "Whether the tenant can use the S3 SelectObjectContent API. It is not set before StorageGRID 11.6.",
+                        Computed:            true,
+                },
+                "allow_compliance_mode": schema.BoolAttribute{
+                        MarkdownDescription: "Whether the tenant can use the compliance mode for S3 Object Lock. It is not set before StorageGRID 11.9.",
+                        Computed:            true,
+                },
+                "max_retention_days": schema.Int64Attribute{
+                        MarkdownDescription: "Maximum retention period, in days, that is allowed for the new objects in compliance or governance mode. It is not set when there is no maximum in days.",
+                        Computed:            true,
+                },
+                "quota_object_bytes": schema.Int64Attribute{
+                        MarkdownDescription: "Quota of the tenant, in bytes. It is not set when there is no quota.",
+                        Computed:            true,
+                },
+        }
+}</span>
+
+// Metadata returns the data source type name.
+func (d *GridAccountDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) <span class="cov8" title="1">{
+        resp.TypeName = req.ProviderTypeName + "_" + d.config.Name
+}</span>
+
+// Schema defines the schema for the data source.
+func (d *GridAccountDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) <span class="cov8" title="1">{
+        attributes := gridAccountDataSourceAttributes()
+        attributes["cx_profile_name"] = schema.StringAttribute{
+                MarkdownDescription: "Connection profile name. The profile must be a grid profile, without `account_id`.",
+                Required:            true,
+        }
+        attributes["id"] = schema.StringAttribute{
+                MarkdownDescription: "ID of the tenant account, a number assigned by StorageGRID. Set `id` or `name`.",
+                Optional:            true,
+                Computed:            true,
+                Validators: []validator.String{
+                        stringvalidator.RegexMatches(gridAccountIDFormat, "must be the id of a tenant account, a number"),
+                },
+        }
+        attributes["name"] = schema.StringAttribute{
+                MarkdownDescription: "Name of the tenant account. Set `name` or `id`. The name does not have to be unique: the data source fails when several tenant accounts have the name, use the `id` then.",
+                Optional:            true,
+                Computed:            true,
+                Validators: []validator.String{
+                        stringvalidator.LengthAtLeast(1),
+                        stringvalidator.ExactlyOneOf(path.MatchRoot("id")),
+                },
+        }
+        resp.Schema = schema.Schema{
+                // This description is used by the documentation generator and the language server.
+                MarkdownDescription: "Reads a tenant account of StorageGRID, by its name or by its ID, with the Grid Management API. " +
+                        "StorageGRID never returns the password of the root user of the tenant.",
+                Attributes: attributes,
+        }
+}</span>
+
+// Configure adds the provider configured client to the data source.
+func (d *GridAccountDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) <span class="cov8" title="1">{
+        // Prevent panic if the provider has not been configured.
+        if req.ProviderData == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">config, ok := req.ProviderData.(*connection.Config)
+        if !ok </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Data Source Configure Type",
+                        fmt.Sprintf("Expected *connection.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+                )
+                return
+        }</span>
+        <span class="cov8" title="1">d.config.ProviderConfig = config</span>
+}
+
+// Read refreshes the Terraform state with the latest data.
+func (d *GridAccountDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) <span class="cov8" title="1">{
+        var data GridAccountDataSourceModel
+
+        // Read Terraform configuration data into the model
+        resp.Diagnostics.Append(req.Config.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        // we need to defer setting the client until we can read the connection profile name
+        client, err := connection.GetRestClient(errorHandler, d.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+
+        <span class="cov8" title="1">var account *interfaces.GridAccountGetDataModel
+        if !data.ID.IsNull() &amp;&amp; !data.ID.IsUnknown() </span><span class="cov8" title="1">{
+                account, err = interfaces.GetGridAccountByID(errorHandler, client, data.ID.ValueString())
+                if err != nil </span><span class="cov0" title="0">{
+                        // error reporting done inside GetGridAccountByID
+                        return
+                }</span>
+                <span class="cov8" title="1">if account == nil </span><span class="cov8" title="1">{
+                        errorHandler.MakeAndReportError("grid_account not found", fmt.Sprintf("no grid_account with id %s", data.ID.ValueString()))
+                        return
+                }</span>
+        } else<span class="cov8" title="1"> {
+                account, err = interfaces.GetGridAccountByName(errorHandler, client, data.Name.ValueString())
+                if err != nil </span><span class="cov8" title="1">{
+                        // error reporting done inside GetGridAccountByName
+                        return
+                }</span>
+        }
+
+        <span class="cov8" title="1">item := newGridAccountDataSourceItem(ctx, account, &amp;resp.Diagnostics)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">data.ID = item.ID
+        data.Name = item.Name
+        data.Description = item.Description
+        data.Capabilities = item.Capabilities
+        data.UseAccountIdentitySource = item.UseAccountIdentitySource
+        data.AllowPlatformServices = item.AllowPlatformServices
+        data.AllowSelectObjectContent = item.AllowSelectObjectContent
+        data.AllowComplianceMode = item.AllowComplianceMode
+        data.MaxRetentionDays = item.MaxRetentionDays
+        data.QuotaObjectBytes = item.QuotaObjectBytes
+
+        // Write logs using the tflog package
+        // Documentation: https://terraform.io/plugin/log
+        tflog.Debug(ctx, fmt.Sprintf("read a data source: %s", account.ID))
+
+        // Save data into Terraform state
+        resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package grid
+
+import (
+        "context"
+        "fmt"
+        "regexp"
+        "strings"
+
+        "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+        "github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
+        "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+        "github.com/hashicorp/terraform-plugin-framework/diag"
+        "github.com/hashicorp/terraform-plugin-framework/path"
+        "github.com/hashicorp/terraform-plugin-framework/resource"
+        "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+        "github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+        "github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+        "github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+        "github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+        "github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+        "github.com/hashicorp/terraform-plugin-framework/schema/validator"
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// Ensure provider defined types fully satisfy framework interfaces
+var _ resource.Resource = &amp;GridAccountResource{}
+var _ resource.ResourceWithImportState = &amp;GridAccountResource{}
+var _ resource.ResourceWithValidateConfig = &amp;GridAccountResource{}
+
+// NewGridAccountResource is a helper function to simplify the provider implementation.
+func NewGridAccountResource() resource.Resource <span class="cov8" title="1">{
+        return &amp;GridAccountResource{
+                config: connection.ResourceOrDataSourceConfig{
+                        Name: "grid_account",
+                },
+        }
+}</span>
+
+// GridAccountResource defines the resource implementation.
+type GridAccountResource struct {
+        config connection.ResourceOrDataSourceConfig
+}
+
+// GridAccountResourceModel describes the resource data model.
+type GridAccountResourceModel struct {
+        CxProfileName            types.String `tfsdk:"cx_profile_name"`
+        ID                       types.String `tfsdk:"id"`
+        Name                     types.String `tfsdk:"name"`
+        Description              types.String `tfsdk:"description"`
+        Capabilities             types.Set    `tfsdk:"capabilities"`
+        UseAccountIdentitySource types.Bool   `tfsdk:"use_account_identity_source"`
+        AllowPlatformServices    types.Bool   `tfsdk:"allow_platform_services"`
+        AllowSelectObjectContent types.Bool   `tfsdk:"allow_select_object_content"`
+        AllowComplianceMode      types.Bool   `tfsdk:"allow_compliance_mode"`
+        MaxRetentionDays         types.Int64  `tfsdk:"max_retention_days"`
+        QuotaObjectBytes         types.Int64  `tfsdk:"quota_object_bytes"`
+        Password                 types.String `tfsdk:"password"`
+        GrantRootAccessToGroup   types.String `tfsdk:"grant_root_access_to_group"`
+}
+
+// rootAccessGroupRegexp is the format of the group that has the root access: federated-group/&lt;name&gt;
+var rootAccessGroupRegexp = regexp.MustCompile(`^federated-group/.+`)
+
+// Metadata returns the resource type name.
+func (r *GridAccountResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) <span class="cov8" title="1">{
+        resp.TypeName = req.ProviderTypeName + "_" + r.config.Name
+}</span>
+
+// Schema defines the schema for the resource.
+func (r *GridAccountResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) <span class="cov8" title="1">{
+        resp.Schema = schema.Schema{
+                // This description is used by the documentation generator and the language server.
+                MarkdownDescription: "Manages a tenant account of StorageGRID, with the Grid Management API.\n\nStorageGRID can take 15 minutes or longer to apply the settings of a tenant account across the grid. A tenant account can only be deleted when all its S3 buckets and objects are removed: StorageGRID refuses otherwise, and Terraform shows its message. When the tenant account can use a grid federation connection, StorageGRID deletes it on all the grids of the connection.",
+
+                Attributes: map[string]schema.Attribute{
+                        "cx_profile_name": schema.StringAttribute{
+                                MarkdownDescription: "Connection profile name. The profile must be a grid profile, without `account_id`.",
+                                Required:            true,
+                        },
+                        "id": schema.StringAttribute{
+                                MarkdownDescription: "ID of the tenant account, assigned by StorageGRID.",
+                                Computed:            true,
+                                PlanModifiers: []planmodifier.String{
+                                        stringplanmodifier.UseStateForUnknown(),
+                                },
+                        },
+                        "name": schema.StringAttribute{
+                                MarkdownDescription: "Name of the tenant account, for display. It does not have to be unique, as StorageGRID identifies the account with its ID. It can be changed.",
+                                Required:            true,
+                                Validators: []validator.String{
+                                        stringvalidator.LengthAtLeast(1),
+                                },
+                        },
+                        "description": schema.StringAttribute{
+                                MarkdownDescription: "Additional information that identifies the tenant account, such as an email address. It is not shown in the Tenant Manager.",
+                                Optional:            true,
+                                Validators: []validator.String{
+                                        stringvalidator.LengthAtLeast(1),
+                                },
+                        },
+                        "capabilities": schema.SetAttribute{
+                                MarkdownDescription: "Capabilities of the tenant account: `s3`, the object storage protocol (`swift` was removed in StorageGRID 12.0), and `management`, which users need to sign in to the Tenant Manager and to use the Tenant Management API, for example `[\"management\", \"s3\"]`.",
+                                ElementType:         types.StringType,
+                                Required:            true,
+                                Validators: []validator.Set{
+                                        setvalidator.SizeAtLeast(1),
+                                        setvalidator.ValueStringsAre(stringvalidator.LengthAtLeast(1)),
+                                },
+                        },
+                        "use_account_identity_source": schema.BoolAttribute{
+                                MarkdownDescription: "Whether the tenant uses its own identity source, and manages its own groups and users (`true`), or uses the identity source of the grid (`false`). StorageGRID does not accept `false` for a tenant that already configured its own identity source: the tenant has to disable it first.",
+                                Required:            true,
+                        },
+                        "allow_platform_services": schema.BoolAttribute{
+                                MarkdownDescription: "Whether the tenant can use the platform services, such as CloudMirror replication, notifications and search integration. Defaults to `false`.",
+                                Optional:            true,
+                                Computed:            true,
+                                Default:             booldefault.StaticBool(false),
+                        },
+                        "allow_select_object_content": schema.BoolAttribute{
+                                MarkdownDescription: "Whether the tenant can use the S3 SelectObjectContent API to filter and retrieve object data. Requires StorageGRID 11.6 or later. When it is not set, the value of StorageGRID is kept.",
+                                Optional:            true,
+                                Computed:            true,
+                                PlanModifiers: []planmodifier.Bool{
+                                        boolplanmodifier.UseStateForUnknown(),
+                                },
+                        },
+                        "allow_compliance_mode": schema.BoolAttribute{
+                                MarkdownDescription: "Whether the tenant can use the compliance mode for S3 Object Lock and retention. Requires StorageGRID 11.9 or later, and S3 Object Lock enabled on the grid. When it is not set, the value of StorageGRID is kept.",
+                                Optional:            true,
+                                Computed:            true,
+                                PlanModifiers: []planmodifier.Bool{
+                                        boolplanmodifier.UseStateForUnknown(),
+                                },
+                        },
+                        "max_retention_days": schema.Int64Attribute{
+                                MarkdownDescription: "Maximum retention period, in days, that is allowed for the new objects in compliance or governance mode. Requires StorageGRID 11.9 or later, and S3 Object Lock enabled on the grid. Setting it replaces a maximum retention period that is in years. When it is not set, the value of StorageGRID is kept.",
+                                Optional:            true,
+                                Computed:            true,
+                                Validators: []validator.Int64{
+                                        int64validator.AtLeast(1),
+                                },
+                                PlanModifiers: []planmodifier.Int64{
+                                        int64planmodifier.UseStateForUnknown(),
+                                },
+                        },
+                        "quota_object_bytes": schema.Int64Attribute{
+                                MarkdownDescription: "Quota of the tenant, in bytes. It is a logical amount, the size of the objects, and not the space that they use on disk. Do not set it for no quota.",
+                                Optional:            true,
+                                Validators: []validator.Int64{
+                                        int64validator.AtLeast(1),
+                                },
+                        },
+                        "password": schema.StringAttribute{
+                                MarkdownDescription: "Password of the root user of the tenant, at least 8 characters. Set it, or `grant_root_access_to_group`, when the tenant account is created: nobody can sign in to the tenant otherwise. StorageGRID never returns the password: Terraform sets it when the tenant account is created, and sets it again when the value changes. It does not detect a password that was changed in StorageGRID, and removing it from the configuration does not change the password of the tenant.",
+                                Optional:            true,
+                                Sensitive:           true,
+                                Validators: []validator.String{
+                                        stringvalidator.LengthAtLeast(8),
+                                },
+                        },
+                        "grant_root_access_to_group": schema.StringAttribute{
+                                MarkdownDescription: "Federated group of the grid that has the Root access permission in the tenant, in the format `federated-group/&lt;name&gt;`. The group must exist in the Grid Manager, and the tenant must use the identity source of the grid: `use_account_identity_source` is `false`. StorageGRID only uses it when the tenant account is created, and never returns it: it cannot be changed afterwards. To use another group, replace the account, or change the permissions of the groups of the tenant.",
+                                Optional:            true,
+                                Validators: []validator.String{
+                                        stringvalidator.RegexMatches(rootAccessGroupRegexp, "must begin with federated-group/"),
+                                },
+                                PlanModifiers: []planmodifier.String{
+                                        rootAccessGroupIsSetOnce{},
+                                },
+                        },
+                },
+        }
+}</span>
+
+// rootAccessGroupIsSetOnce is a plan modifier that rejects a change of grant_root_access_to_group on an account that
+// exists, as StorageGRID only uses it when it creates the account.  The account is not replaced, as this destroys the
+// tenant: use terraform apply -replace if this is what is wanted.
+type rootAccessGroupIsSetOnce struct{}
+
+// Description returns a plain text description of the modifier.
+func (m rootAccessGroupIsSetOnce) Description(ctx context.Context) string <span class="cov8" title="1">{
+        return "grant_root_access_to_group cannot be changed after the tenant account is created."
+}</span>
+
+// MarkdownDescription returns a markdown description of the modifier.
+func (m rootAccessGroupIsSetOnce) MarkdownDescription(ctx context.Context) string <span class="cov0" title="0">{
+        return m.Description(ctx)
+}</span>
+
+// PlanModifyString rejects a change from a value to another value.
+func (m rootAccessGroupIsSetOnce) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) <span class="cov8" title="1">{
+        if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() </span><span class="cov8" title="1">{
+                // create or destroy
+                return
+        }</span>
+        <span class="cov8" title="1">if err := checkRootAccessGroupIsNotChanged(req.StateValue, req.PlanValue); err != nil </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddAttributeError(req.Path, "grant_root_access_to_group cannot be changed", err.Error())
+        }</span>
+}
+
+// checkRootAccessGroupIsNotChanged returns an error if the group that was set is changed.  Setting it for the first
+// time (an account that was imported) and removing it are accepted: StorageGRID is not told, as it cannot be.
+func checkRootAccessGroupIsNotChanged(state types.String, plan types.String) error <span class="cov8" title="1">{
+        if state.IsNull() || state.IsUnknown() || plan.IsNull() || plan.IsUnknown() || state.Equal(plan) </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">return fmt.Errorf("StorageGRID only uses the group that has the root access when it creates the tenant account, "+
+                "and the group is %s: use terraform apply -replace to create the account again, "+
+                "or change the permissions of the groups of the tenant", state.ValueString())</span>
+}
+
+// ValidateConfig checks the combinations of attributes that StorageGRID does not accept.
+func (r *GridAccountResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) <span class="cov8" title="1">{
+        var group types.String
+        var useAccountIdentitySource types.Bool
+        resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("grant_root_access_to_group"), &amp;group)...)
+        resp.Diagnostics.Append(req.Config.GetAttribute(ctx, path.Root("use_account_identity_source"), &amp;useAccountIdentitySource)...)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+        // the group is a federated group of the identity source of the grid
+        <span class="cov8" title="1">if !group.IsNull() &amp;&amp; !group.IsUnknown() &amp;&amp; !useAccountIdentitySource.IsNull() &amp;&amp; !useAccountIdentitySource.IsUnknown() &amp;&amp; useAccountIdentitySource.ValueBool() </span><span class="cov8" title="1">{
+                resp.Diagnostics.AddAttributeError(path.Root("grant_root_access_to_group"), "Invalid configuration",
+                        "grant_root_access_to_group is a federated group of the identity source of the grid, and the tenant uses its own identity source: "+
+                                "set use_account_identity_source to false, or do not set grant_root_access_to_group.")
+        }</span>
+}
+
+// Configure adds the provider configured client to the resource.
+func (r *GridAccountResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) <span class="cov8" title="1">{
+        // Prevent panic if the provider has not been configured.
+        if req.ProviderData == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">config, ok := req.ProviderData.(*connection.Config)
+        if !ok </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Resource Configure Type",
+                        fmt.Sprintf("Expected *connection.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+                )
+                return
+        }</span>
+        <span class="cov8" title="1">r.config.ProviderConfig = config</span>
+}
+
+// optionalBool returns nil for a value that is not set.
+func optionalBool(value types.Bool) *bool <span class="cov8" title="1">{
+        if value.IsNull() || value.IsUnknown() </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return value.ValueBoolPointer()</span>
+}
+
+// optionalInt64 returns nil for a value that is not set.
+func optionalInt64(value types.Int64) *int64 <span class="cov8" title="1">{
+        if value.IsNull() || value.IsUnknown() </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">return value.ValueInt64Pointer()</span>
+}
+
+// toBody converts the model into what is sent to StorageGRID.  The password, and the group that has the root access,
+// are only sent when the account is created.
+func (m *GridAccountResourceModel) toBody(ctx context.Context, diags *diag.Diagnostics, create bool) interfaces.GridAccountResourceBodyDataModel <span class="cov8" title="1">{
+        var capabilities []string
+        diags.Append(m.Capabilities.ElementsAs(ctx, &amp;capabilities, false)...)
+        body := interfaces.GridAccountResourceBodyDataModel{
+                Name:         m.Name.ValueString(),
+                Description:  m.Description.ValueStringPointer(),
+                Capabilities: capabilities,
+                Policy: interfaces.GridAccountPolicyBodyDataModel{
+                        UseAccountIdentitySource: m.UseAccountIdentitySource.ValueBool(),
+                        AllowPlatformServices:    m.AllowPlatformServices.ValueBool(),
+                        AllowSelectObjectContent: optionalBool(m.AllowSelectObjectContent),
+                        AllowComplianceMode:      optionalBool(m.AllowComplianceMode),
+                        MaxRetentionDays:         optionalInt64(m.MaxRetentionDays),
+                        QuotaObjectBytes:         optionalInt64(m.QuotaObjectBytes),
+                },
+        }
+        if create </span><span class="cov8" title="1">{
+                body.Password = m.Password.ValueString()
+                body.GrantRootAccessToGroup = m.GrantRootAccessToGroup.ValueString()
+        }</span>
+        <span class="cov8" title="1">return body</span>
+}
+
+// setFromAccount sets all the attributes that StorageGRID returns.  It is used to read the account: what the
+// configuration says is replaced by what StorageGRID has.  The password and the group that has the root access are never
+// returned, and are not changed.
+func (m *GridAccountResourceModel) setFromAccount(ctx context.Context, account *interfaces.GridAccountGetDataModel, diags *diag.Diagnostics) <span class="cov8" title="1">{
+        m.ID = types.StringValue(account.ID)
+        m.Name = types.StringValue(account.Name)
+        m.Description = types.StringPointerValue(account.Description)
+        if account.Description != nil &amp;&amp; *account.Description == "" </span><span class="cov0" title="0">{
+                // an empty description is not a description
+                m.Description = types.StringNull()
+        }</span>
+        <span class="cov8" title="1">capabilities := account.Capabilities
+        if capabilities == nil </span><span class="cov0" title="0">{
+                capabilities = []string{}
+        }</span>
+        <span class="cov8" title="1">set, setDiags := types.SetValueFrom(ctx, types.StringType, capabilities)
+        diags.Append(setDiags...)
+        m.Capabilities = set
+        // when StorageGRID does not return a setting that always exists, the value that we know is kept
+        if account.Policy.UseAccountIdentitySource != nil </span><span class="cov8" title="1">{
+                m.UseAccountIdentitySource = types.BoolValue(*account.Policy.UseAccountIdentitySource)
+        }</span>
+        <span class="cov8" title="1">if account.Policy.AllowPlatformServices != nil </span><span class="cov8" title="1">{
+                m.AllowPlatformServices = types.BoolValue(*account.Policy.AllowPlatformServices)
+        }</span>
+        <span class="cov8" title="1">m.AllowSelectObjectContent = types.BoolPointerValue(account.Policy.AllowSelectObjectContent)
+        m.AllowComplianceMode = types.BoolPointerValue(account.Policy.AllowComplianceMode)
+        m.MaxRetentionDays = types.Int64PointerValue(account.Policy.MaxRetentionDays)
+        m.QuotaObjectBytes = types.Int64PointerValue(account.Policy.QuotaObjectBytes)</span>
+}
+
+// setUnknownFromAccount sets the ID, and the attributes that are not known yet because they were not configured
+// (StorageGRID chooses the value), from the account that StorageGRID returned for a create or an update.  The values that are
+// known are the ones of the plan: Terraform requires them not to change, and the next refresh shows the differences.
+func (m *GridAccountResourceModel) setUnknownFromAccount(account *interfaces.GridAccountGetDataModel) <span class="cov8" title="1">{
+        m.ID = types.StringValue(account.ID)
+        if m.AllowPlatformServices.IsUnknown() </span><span class="cov0" title="0">{
+                m.AllowPlatformServices = types.BoolPointerValue(account.Policy.AllowPlatformServices)
+        }</span>
+        <span class="cov8" title="1">if m.AllowSelectObjectContent.IsUnknown() </span><span class="cov8" title="1">{
+                m.AllowSelectObjectContent = types.BoolPointerValue(account.Policy.AllowSelectObjectContent)
+        }</span>
+        <span class="cov8" title="1">if m.AllowComplianceMode.IsUnknown() </span><span class="cov8" title="1">{
+                m.AllowComplianceMode = types.BoolPointerValue(account.Policy.AllowComplianceMode)
+        }</span>
+        <span class="cov8" title="1">if m.MaxRetentionDays.IsUnknown() </span><span class="cov8" title="1">{
+                m.MaxRetentionDays = types.Int64PointerValue(account.Policy.MaxRetentionDays)
+        }</span>
+}
+
+// hasUnknownSettings returns true if a setting that StorageGRID chooses when it is not configured is not known yet.
+func (m *GridAccountResourceModel) hasUnknownSettings() bool <span class="cov8" title="1">{
+        return m.AllowSelectObjectContent.IsUnknown() || m.AllowComplianceMode.IsUnknown() || m.MaxRetentionDays.IsUnknown()
+}</span>
+
+// settingsChanged returns true if the plan changes what is sent by an update of the account.
+func (m *GridAccountResourceModel) settingsChanged(state *GridAccountResourceModel) bool <span class="cov8" title="1">{
+        return !m.Name.Equal(state.Name) ||
+                !m.Description.Equal(state.Description) ||
+                !m.Capabilities.Equal(state.Capabilities) ||
+                !m.UseAccountIdentitySource.Equal(state.UseAccountIdentitySource) ||
+                !m.AllowPlatformServices.Equal(state.AllowPlatformServices) ||
+                !m.AllowSelectObjectContent.Equal(state.AllowSelectObjectContent) ||
+                !m.AllowComplianceMode.Equal(state.AllowComplianceMode) ||
+                !m.MaxRetentionDays.Equal(state.MaxRetentionDays) ||
+                !m.QuotaObjectBytes.Equal(state.QuotaObjectBytes)
+}</span>
+
+// checkGridAccountVersion reports an error if the configuration has a setting that the version of StorageGRID
+// does not have: StorageGRID would reject it with an error that does not tell which version is required.
+func checkGridAccountVersion(errorHandler *utils.ErrorHandler, client *restclient.RestClient, m *GridAccountResourceModel) error <span class="cov8" title="1">{
+        gates := []struct {
+                attribute string
+                set       bool
+                major     int
+                minor     int
+        }{
+                {"allow_select_object_content", optionalBool(m.AllowSelectObjectContent) != nil, 11, 6},
+                {"allow_compliance_mode", optionalBool(m.AllowComplianceMode) != nil, 11, 9},
+                {"max_retention_days", optionalInt64(m.MaxRetentionDays) != nil, 11, 9},
+        }
+        var version restclient.SGVersion
+        versionRead := false
+        for _, gate := range gates </span><span class="cov8" title="1">{
+                if !gate.set </span><span class="cov8" title="1">{
+                        continue</span>
+                }
+                <span class="cov8" title="1">if !versionRead </span><span class="cov8" title="1">{
+                        var err error
+                        version, err = client.Version()
+                        if err != nil </span><span class="cov0" title="0">{
+                                return errorHandler.MakeAndReportError("error reading the StorageGRID version", err.Error())
+                        }</span>
+                        <span class="cov8" title="1">versionRead = true</span>
+                }
+                <span class="cov8" title="1">if !version.AtLeast(gate.major, gate.minor) </span><span class="cov0" title="0">{
+                        return errorHandler.MakeAndReportError("unsupported attribute",
+                                fmt.Sprintf("%s requires StorageGRID %d.%d or later, and this is StorageGRID %s.", gate.attribute, gate.major, gate.minor, version.Full))
+                }</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Read refreshes the Terraform state with the latest data.
+func (r *GridAccountResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) <span class="cov8" title="1">{
+        var data GridAccountResourceModel
+
+        // Read Terraform prior state data into the model
+        resp.Diagnostics.Append(req.State.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        // we need to defer setting the client until we can read the connection profile name
+        client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+
+        <span class="cov8" title="1">account, err := interfaces.GetGridAccountByID(errorHandler, client, data.ID.ValueString())
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside GetGridAccountByID
+                return
+        }</span>
+        <span class="cov8" title="1">if account == nil </span><span class="cov8" title="1">{
+                // it was deleted outside of Terraform: remove it from the state, so that it is created again
+                tflog.Warn(ctx, fmt.Sprintf("grid_account %s not found, removing it from the state", data.ID.ValueString()))
+                resp.State.RemoveResource(ctx)
+                return
+        }</span>
+
+        <span class="cov8" title="1">data.setFromAccount(ctx, account, &amp;resp.Diagnostics)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // Write logs using the tflog package
+        // Documentation: https://terraform.io/plugin/log
+        <span class="cov8" title="1">tflog.Debug(ctx, fmt.Sprintf("read a resource: %s", account.ID))
+
+        // Save data into Terraform state
+        resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+
+// Create a resource and retrieve its ID
+func (r *GridAccountResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) <span class="cov8" title="1">{
+        var data GridAccountResourceModel
+
+        // Read Terraform plan data into the model
+        resp.Diagnostics.Append(req.Plan.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+        <span class="cov8" title="1">if err := checkGridAccountVersion(errorHandler, client, &amp;data); err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside checkGridAccountVersion
+                return
+        }</span>
+
+        <span class="cov8" title="1">body := data.toBody(ctx, &amp;resp.Diagnostics, true)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">created, err := interfaces.CreateGridAccount(errorHandler, client, body)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside CreateGridAccount
+                return
+        }</span>
+
+        <span class="cov8" title="1">account := created
+        if data.hasUnknownSettings() </span><span class="cov8" title="1">{
+                // StorageGRID may not return the settings that it chose when it creates the account: read them, so that the state
+                // is the same as after a refresh.  The account exists, so a failure to read it does not fail the creation.
+                if read, err := interfaces.GetGridAccountByID(utils.NewErrorHandler(ctx, &amp;diag.Diagnostics{}), client, created.ID); err == nil &amp;&amp; read != nil </span><span class="cov8" title="1">{
+                        account = read
+                }</span>
+        }
+        <span class="cov8" title="1">data.setUnknownFromAccount(account)
+
+        tflog.Trace(ctx, "created a resource")
+
+        // Save data into Terraform state
+        resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+
+// Update updates the resource and sets the updated Terraform state on success.
+func (r *GridAccountResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) <span class="cov8" title="1">{
+        var plan, state GridAccountResourceModel
+
+        // Read Terraform plan data and prior state data into the models
+        resp.Diagnostics.Append(req.Plan.Get(ctx, &amp;plan)...)
+        resp.Diagnostics.Append(req.State.Get(ctx, &amp;state)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        client, err := connection.GetRestClient(errorHandler, r.config, plan.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+        <span class="cov8" title="1">if state.ID.IsNull() || state.ID.ValueString() == "" </span><span class="cov0" title="0">{
+                errorHandler.MakeAndReportError("ID is missing", "grid_account ID is not set in the state")
+                return
+        }</span>
+        <span class="cov8" title="1">id := state.ID.ValueString()
+        if err := checkRootAccessGroupIsNotChanged(state.GrantRootAccessToGroup, plan.GrantRootAccessToGroup); err != nil </span><span class="cov0" title="0">{
+                errorHandler.MakeAndReportError("grant_root_access_to_group cannot be changed", err.Error())
+                return
+        }</span>
+
+        // what is saved in the state when the update fails: the password is only changed after the settings
+        <span class="cov8" title="1">data := plan
+        data.ID = state.ID
+        data.Password = state.Password
+
+        if plan.settingsChanged(&amp;state) </span><span class="cov8" title="1">{
+                if err := checkGridAccountVersion(errorHandler, client, &amp;plan); err != nil </span><span class="cov0" title="0">{
+                        // error reporting done inside checkGridAccountVersion
+                        return
+                }</span>
+                <span class="cov8" title="1">body := plan.toBody(ctx, &amp;resp.Diagnostics, false)
+                if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                        return
+                }</span>
+                <span class="cov8" title="1">updated, err := interfaces.UpdateGridAccount(errorHandler, client, id, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        // error reporting done inside UpdateGridAccount
+                        return
+                }</span>
+                <span class="cov8" title="1">data.setUnknownFromAccount(updated)</span>
+        }
+        // the settings are changed: save them now, so that they are not lost if the password cannot be changed
+        <span class="cov8" title="1">resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">if plan.Password.IsNull() || plan.Password.Equal(state.Password) </span><span class="cov8" title="1">{
+                // removing the password from the configuration does not change the password of the tenant
+                data.Password = plan.Password
+        }</span> else<span class="cov8" title="1"> {
+                if err := interfaces.ChangeGridAccountPassword(errorHandler, client, id, plan.Password.ValueString()); err != nil </span><span class="cov0" title="0">{
+                        // error reporting done inside ChangeGridAccountPassword, the password is changed again by the next apply
+                        return
+                }</span>
+                <span class="cov8" title="1">data.Password = plan.Password</span>
+        }
+
+        // Save updated data into Terraform state
+        <span class="cov8" title="1">resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+
+// Delete deletes the resource and removes the Terraform state on success.
+func (r *GridAccountResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) <span class="cov8" title="1">{
+        var data GridAccountResourceModel
+
+        // Read Terraform prior state data into the model
+        resp.Diagnostics.Append(req.State.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+
+        <span class="cov8" title="1">if data.ID.IsNull() || data.ID.ValueString() == "" </span><span class="cov0" title="0">{
+                errorHandler.MakeAndReportError("ID is missing", "grid_account ID is not set in the state")
+                return
+        }</span>
+
+        // error reporting done inside DeleteGridAccount
+        <span class="cov8" title="1">_ = interfaces.DeleteGridAccount(errorHandler, client, data.ID.ValueString())</span>
+}
+
+// ImportState imports a resource using the ID from the terraform import command, by calling the Read method.
+// The import identifier is id,cx_profile_name
+func (r *GridAccountResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) <span class="cov8" title="1">{
+        idParts := strings.Split(req.ID, ",")
+
+        if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Import Identifier",
+                        fmt.Sprintf("Expected import identifier with format: id,cx_profile_name. Got: %q", req.ID),
+                )
+                return
+        }</span>
+        <span class="cov8" title="1">if !interfaces.IsGridAccountID(idParts[0]) </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Import Identifier",
+                        fmt.Sprintf("%q is not the id of a tenant account, which is a number such as 12345678901234567890. Expected import identifier with format: id,cx_profile_name", idParts[0]),
+                )
+                return
+        }</span>
+
+        <span class="cov8" title="1">resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[0])...)
+        resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("cx_profile_name"), idParts[1])...)</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package grid
+
+import (
+        "context"
+        "fmt"
+
+        "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+        "github.com/hashicorp/terraform-plugin-framework/datasource"
+        "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+        "github.com/hashicorp/terraform-plugin-framework/schema/validator"
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// Ensure provider defined types fully satisfy framework interfaces
+var _ datasource.DataSource = &amp;GridAccountsDataSource{}
+
+// NewGridAccountsDataSource is a helper function to simplify the provider implementation.
+func NewGridAccountsDataSource() datasource.DataSource <span class="cov8" title="1">{
+        return &amp;GridAccountsDataSource{
+                config: connection.ResourceOrDataSourceConfig{
+                        Name: "grid_accounts",
+                },
+        }
+}</span>
+
+// GridAccountsDataSource defines the data source implementation.
+type GridAccountsDataSource struct {
+        config connection.ResourceOrDataSourceConfig
+}
+
+// GridAccountsDataSourceModel describes the data source data model.
+type GridAccountsDataSourceModel struct {
+        CxProfileName types.String                     `tfsdk:"cx_profile_name"`
+        GridAccounts  []GridAccountDataSourceItemModel `tfsdk:"grid_accounts"`
+        Filter        *GridAccountsDataSourceFilter    `tfsdk:"filter"`
+}
+
+// GridAccountsDataSourceFilter describes the data source data model for queries.
+type GridAccountsDataSourceFilter struct {
+        Name types.String `tfsdk:"name"`
+}
+
+// Metadata returns the data source type name.
+func (d *GridAccountsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) <span class="cov8" title="1">{
+        resp.TypeName = req.ProviderTypeName + "_" + d.config.Name
+}</span>
+
+// Schema defines the schema for the data source.
+func (d *GridAccountsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) <span class="cov8" title="1">{
+        itemAttributes := gridAccountDataSourceAttributes()
+        itemAttributes["id"] = schema.StringAttribute{
+                MarkdownDescription: "ID of the tenant account, a number assigned by StorageGRID.",
+                Computed:            true,
+        }
+        itemAttributes["name"] = schema.StringAttribute{
+                MarkdownDescription: "Name of the tenant account. It does not have to be unique.",
+                Computed:            true,
+        }
+        resp.Schema = schema.Schema{
+                // This description is used by the documentation generator and the language server.
+                MarkdownDescription: "Lists the tenant accounts of StorageGRID, with the Grid Management API. " +
+                        "StorageGRID never returns the password of the root user of a tenant.",
+
+                Attributes: map[string]schema.Attribute{
+                        "cx_profile_name": schema.StringAttribute{
+                                MarkdownDescription: "Connection profile name. The profile must be a grid profile, without `account_id`.",
+                                Required:            true,
+                        },
+                        "filter": schema.SingleNestedAttribute{
+                                MarkdownDescription: "Only return the tenant accounts that match all the filter attributes.",
+                                Attributes: map[string]schema.Attribute{
+                                        "name": schema.StringAttribute{
+                                                MarkdownDescription: "Name of the tenant accounts. Several tenant accounts can have the same name.",
+                                                Optional:            true,
+                                                Validators: []validator.String{
+                                                        stringvalidator.LengthAtLeast(1),
+                                                },
+                                        },
+                                },
+                                Optional: true,
+                        },
+                        "grid_accounts": schema.ListNestedAttribute{
+                                MarkdownDescription: "The tenant accounts, in the order returned by StorageGRID.",
+                                Computed:            true,
+                                NestedObject: schema.NestedAttributeObject{
+                                        Attributes: itemAttributes,
+                                },
+                        },
+                },
+        }
+}</span>
+
+// Configure adds the provider configured client to the data source.
+func (d *GridAccountsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) <span class="cov8" title="1">{
+        // Prevent panic if the provider has not been configured.
+        if req.ProviderData == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">config, ok := req.ProviderData.(*connection.Config)
+        if !ok </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Data Source Configure Type",
+                        fmt.Sprintf("Expected *connection.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+                )
+                return
+        }</span>
+        <span class="cov8" title="1">d.config.ProviderConfig = config</span>
+}
+
+// Read refreshes the Terraform state with the latest data.
+func (d *GridAccountsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) <span class="cov8" title="1">{
+        var data GridAccountsDataSourceModel
+
+        // Read Terraform configuration data into the model
+        resp.Diagnostics.Append(req.Config.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        // we need to defer setting the client until we can read the connection profile name
+        client, err := connection.GetRestClient(errorHandler, d.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+
+        <span class="cov8" title="1">var filter *interfaces.GridAccountDataSourceFilterModel
+        if data.Filter != nil </span><span class="cov8" title="1">{
+                filter = &amp;interfaces.GridAccountDataSourceFilterModel{Name: data.Filter.Name.ValueString()}
+        }</span>
+        <span class="cov8" title="1">accounts, err := interfaces.GetAllGridAccount(errorHandler, client, filter)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside GetAllGridAccount
+                return
+        }</span>
+
+        <span class="cov8" title="1">data.GridAccounts = make([]GridAccountDataSourceItemModel, len(accounts))
+        for index := range accounts </span><span class="cov8" title="1">{
+                data.GridAccounts[index] = newGridAccountDataSourceItem(ctx, &amp;accounts[index], &amp;resp.Diagnostics)
+        }</span>
+        <span class="cov8" title="1">if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // Write logs using the tflog package
+        // Documentation: https://terraform.io/plugin/log
+        <span class="cov8" title="1">tflog.Debug(ctx, fmt.Sprintf("read a data source: %d grid_accounts", len(accounts)))
+
+        // Save data into Terraform state
+        resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package grid
+
+import (
+        "context"
+        "fmt"
+        "strings"
+        "sync"
+
+        "github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
+        "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+        "github.com/hashicorp/terraform-plugin-framework/datasource"
+        "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+        "github.com/hashicorp/terraform-plugin-framework/schema/validator"
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// Ensure provider defined types fully satisfy framework interfaces
+var _ datasource.DataSource = &amp;GridInfoDataSource{}
+
+// NewGridInfoDataSource is a helper function to simplify the provider implementation.
+func NewGridInfoDataSource() datasource.DataSource <span class="cov8" title="1">{
+        return &amp;GridInfoDataSource{
+                config: connection.ResourceOrDataSourceConfig{
+                        Name: "grid_info",
+                },
+        }
+}</span>
+
+// GridInfoDataSource defines the data source implementation.
+type GridInfoDataSource struct {
+        config connection.ResourceOrDataSourceConfig
+}
+
+// GridInfoDataSourceModel describes the data source data model.
+type GridInfoDataSourceModel struct {
+        CxProfileName types.String `tfsdk:"cx_profile_name"`
+        GatherSubset  types.Set    `tfsdk:"gather_subset"`
+        Parameters    types.Map    `tfsdk:"parameters"`
+        Info          types.Map    `tfsdk:"info"`
+}
+
+// gridInfoSubsetsTable is the table of the subsets, for the documentation.
+func gridInfoSubsetsTable() string <span class="cov8" title="1">{
+        var table strings.Builder
+        table.WriteString("| Subset | Info name | Reads |\n| --- | --- | --- |\n")
+        for _, subset := range interfaces.GridInfoSubsets() </span><span class="cov8" title="1">{
+                reads := "`" + subset.API + "`"
+                if strings.HasPrefix(subset.API, "private/") </span><span class="cov8" title="1">{
+                        reads += " (private API)"
+                }</span>
+                <span class="cov8" title="1">fmt.Fprintf(&amp;table, "| `%s` | `%s` | %s |\n", subset.Name, subset.InfoName, reads)</span>
+        }
+        <span class="cov8" title="1">return table.String()</span>
+}
+
+// Metadata returns the data source type name.
+func (d *GridInfoDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) <span class="cov8" title="1">{
+        resp.TypeName = req.ProviderTypeName + "_" + d.config.Name
+}</span>
+
+// Schema defines the schema for the data source.
+func (d *GridInfoDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) <span class="cov8" title="1">{
+        resp.Schema = schema.Schema{
+                // This description is used by the documentation generator and the language server.
+                MarkdownDescription: "Gathers information about the configuration of the grid, with the Grid Management API. " +
+                        "It is the equivalent of the module `na_sg_grid_info` of the Ansible collection `netapp.storagegrid`.\n\n" +
+                        "The information of each subset is returned as JSON, in `info`, with the name of the subset as the key: use `jsondecode` to read it. " +
+                        "It is the `data` of the response of StorageGRID, whose shape depends on the subset and on the release of StorageGRID. " +
+                        "The values of the keys whose name contains `password`, `passphrase`, `secret`, `token`, `privateKey`, `credential` or `community` are replaced by `********`.\n\n" +
+                        "A subset is read with a single request: StorageGRID may split a long list in pages, use `parameters` (`limit`, `marker`) to control that, " +
+                        "and the data sources `netapp-storagegrid_grid_account` and `netapp-storagegrid_grid_accounts` to read the tenant accounts. " +
+                        "The subsets that use the private API of StorageGRID are not documented by NetApp, and can change without notice.\n\n" +
+                        "## Subsets\n\n" + gridInfoSubsetsTable(),
+
+                Attributes: map[string]schema.Attribute{
+                        "cx_profile_name": schema.StringAttribute{
+                                MarkdownDescription: "Connection profile name. The profile must be a grid profile, without `account_id`.",
+                                Required:            true,
+                        },
+                        "gather_subset": schema.SetAttribute{
+                                MarkdownDescription: "The subsets to gather: the name of a subset, as `grid/accounts`, or its info name, as `grid_accounts_info`, or `all` for all the subsets. " +
+                                        "Defaults to `all`, which sends more than 50 requests. With `all`, a subset that the user is not allowed to read, or that this release of StorageGRID does not have, " +
+                                        "is skipped with a warning. A subset that is asked for by its name must be read.",
+                                ElementType: types.StringType,
+                                Optional:    true,
+                                Validators: []validator.Set{
+                                        setvalidator.ValueStringsAre(stringvalidator.OneOf(interfaces.GridInfoSubsetNames()...)),
+                                },
+                        },
+                        "parameters": schema.MapAttribute{
+                                MarkdownDescription: "Query parameters that are added to the request of each subset, for instance `limit` to limit the number of objects of the lists.",
+                                ElementType:         types.StringType,
+                                Optional:            true,
+                        },
+                        "info": schema.MapAttribute{
+                                MarkdownDescription: "The information, as JSON, by name of subset.",
+                                ElementType:         types.StringType,
+                                Computed:            true,
+                        },
+                },
+        }
+}</span>
+
+// Configure adds the provider configured client to the data source.
+func (d *GridInfoDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) <span class="cov8" title="1">{
+        // Prevent panic if the provider has not been configured.
+        if req.ProviderData == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">config, ok := req.ProviderData.(*connection.Config)
+        if !ok </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Data Source Configure Type",
+                        fmt.Sprintf("Expected *connection.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+                )
+                return
+        }</span>
+        <span class="cov8" title="1">d.config.ProviderConfig = config</span>
+}
+
+// Read refreshes the Terraform state with the latest data.
+func (d *GridInfoDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) <span class="cov8" title="1">{
+        var data GridInfoDataSourceModel
+
+        // Read Terraform configuration data into the model
+        resp.Diagnostics.Append(req.Config.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var requested []string
+        if !data.GatherSubset.IsNull() &amp;&amp; !data.GatherSubset.IsUnknown() </span><span class="cov8" title="1">{
+                resp.Diagnostics.Append(data.GatherSubset.ElementsAs(ctx, &amp;requested, false)...)
+        }</span>
+        <span class="cov8" title="1">parameters := map[string]string{}
+        if !data.Parameters.IsNull() &amp;&amp; !data.Parameters.IsUnknown() </span><span class="cov8" title="1">{
+                resp.Diagnostics.Append(data.Parameters.ElementsAs(ctx, &amp;parameters, false)...)
+        }</span>
+        <span class="cov8" title="1">if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        subsets, err := interfaces.ResolveGridInfoSubsets(requested)
+        if err != nil </span><span class="cov0" title="0">{
+                errorHandler.MakeAndReportError("invalid gather_subset", err.Error())
+                return
+        }</span>
+        // with all, the subsets that cannot be read are skipped: the user may not be allowed to read them, or this release
+        // of StorageGRID does not have them
+        <span class="cov8" title="1">skipUnreadable := len(requested) == 0
+        for _, name := range requested </span><span class="cov8" title="1">{
+                skipUnreadable = skipUnreadable || name == interfaces.GridInfoAll
+        }</span>
+
+        // we need to defer setting the client until we can read the connection profile name
+        <span class="cov8" title="1">client, err := connection.GetRestClient(errorHandler, d.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+
+        // the subsets are read at the same time, the client limits the number of requests that are in progress
+        <span class="cov8" title="1">results := make([]interfaces.GridInfoResult, len(subsets))
+        var wait sync.WaitGroup
+        for index := range subsets </span><span class="cov8" title="1">{
+                wait.Add(1)
+                go func(index int) </span><span class="cov8" title="1">{
+                        defer wait.Done()
+                        results[index] = interfaces.FetchGridInfo(client, subsets[index], parameters)
+                }</span>(index)
+        }
+        <span class="cov8" title="1">wait.Wait()
+
+        info := make(map[string]string, len(results))
+        var skipped []string
+        for _, result := range results </span><span class="cov8" title="1">{
+                switch </span>{
+                case result.Err == nil:<span class="cov8" title="1">
+                        info[result.Subset.Name] = result.JSON</span>
+                case skipUnreadable &amp;&amp; result.IsSkippable():<span class="cov0" title="0">
+                        skipped = append(skipped, result.Subset.Name)
+                        resp.Diagnostics.AddWarning(fmt.Sprintf("%s was skipped", result.Subset.Name),
+                                fmt.Sprintf("GET %s: %s", result.Subset.API, result.Err))</span>
+                default:<span class="cov0" title="0">
+                        errorHandler.MakeAndReportError(fmt.Sprintf("error reading %s", result.Subset.Name),
+                                fmt.Sprintf("error on GET %s: %s, statusCode %d", result.Subset.API, result.Err, result.StatusCode))</span>
+                }
+        }
+        <span class="cov8" title="1">if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">if len(info) == 0 </span><span class="cov0" title="0">{
+                errorHandler.MakeAndReportError("no information", fmt.Sprintf("none of the %d subsets could be read", len(subsets)))
+                return
+        }</span>
+
+        <span class="cov8" title="1">infoMap, mapDiags := types.MapValueFrom(ctx, types.StringType, info)
+        resp.Diagnostics.Append(mapDiags...)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">data.Info = infoMap
+
+        // Write logs using the tflog package
+        // Documentation: https://terraform.io/plugin/log
+        tflog.Debug(ctx, fmt.Sprintf("read a data source: %d subsets, %d skipped", len(info), len(skipped)))
+
+        // Save data into Terraform state
+        resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package grid
+
+import (
+        "context"
+        "fmt"
+
+        "github.com/hashicorp/terraform-plugin-framework/datasource"
+        "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// Ensure provider defined types fully satisfy framework interfaces
+var _ datasource.DataSource = &amp;GridProductVersionDataSource{}
+
+// NewGridProductVersionDataSource is a helper function to simplify the provider implementation.
+func NewGridProductVersionDataSource() datasource.DataSource <span class="cov8" title="1">{
+        return &amp;GridProductVersionDataSource{
+                config: connection.ResourceOrDataSourceConfig{
+                        Name: "grid_product_version",
+                },
+        }
+}</span>
+
+// GridProductVersionDataSource defines the data source implementation.
+type GridProductVersionDataSource struct {
+        config connection.ResourceOrDataSourceConfig
+}
+
+// GridProductVersionDataSourceModel describes the data source data model.
+type GridProductVersionDataSourceModel struct {
+        CxProfileName  types.String `tfsdk:"cx_profile_name"`
+        ProductVersion types.String `tfsdk:"product_version"`
+        APIVersion     types.String `tfsdk:"api_version"`
+}
+
+// Metadata returns the data source type name.
+func (d *GridProductVersionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) <span class="cov8" title="1">{
+        resp.TypeName = req.ProviderTypeName + "_" + d.config.Name
+}</span>
+
+// Schema defines the schema for the data source.
+func (d *GridProductVersionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) <span class="cov8" title="1">{
+        resp.Schema = schema.Schema{
+                // This description is used by the documentation generator and the language server.
+                MarkdownDescription: "Reads the StorageGRID software version. It is also a simple way to check that a connection profile works.",
+
+                Attributes: map[string]schema.Attribute{
+                        "cx_profile_name": schema.StringAttribute{
+                                MarkdownDescription: "Connection profile name. The profile must be a grid profile, without `account_id`.",
+                                Required:            true,
+                        },
+                        "product_version": schema.StringAttribute{
+                                MarkdownDescription: "StorageGRID software version, for example `11.9.0`.",
+                                Computed:            true,
+                        },
+                        "api_version": schema.StringAttribute{
+                                MarkdownDescription: "Version of the management API used by the provider for this connection profile, for example `v4`.",
+                                Computed:            true,
+                        },
+                },
+        }
+}</span>
+
+// Configure adds the provider configured client to the data source.
+func (d *GridProductVersionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) <span class="cov8" title="1">{
+        // Prevent panic if the provider has not been configured.
+        if req.ProviderData == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">config, ok := req.ProviderData.(*connection.Config)
+        if !ok </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError(
+                        "Unexpected Data Source Configure Type",
+                        fmt.Sprintf("Expected *connection.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+                )
+                return
+        }</span>
+        <span class="cov8" title="1">d.config.ProviderConfig = config</span>
+}
+
+// Read refreshes the Terraform state with the latest data.
+func (d *GridProductVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) <span class="cov8" title="1">{
+        var data GridProductVersionDataSourceModel
+
+        // Read Terraform configuration data into the model
+        resp.Diagnostics.Append(req.Config.Get(ctx, &amp;data)...)
+
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">errorHandler := utils.NewErrorHandler(ctx, &amp;resp.Diagnostics)
+        // we need to defer setting the client until we can read the connection profile name
+        client, err := connection.GetRestClient(errorHandler, d.config, data.CxProfileName)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside NewClient
+                return
+        }</span>
+
+        <span class="cov8" title="1">restInfo, err := interfaces.GetGridProductVersion(errorHandler, client)
+        if err != nil </span><span class="cov0" title="0">{
+                // error reporting done inside GetGridProductVersion
+                return
+        }</span>
+        <span class="cov8" title="1">apiVersion, err := client.APIVersion()
+        if err != nil </span><span class="cov0" title="0">{
+                errorHandler.MakeAndReportError("error reading the API version", err.Error())
+                return
+        }</span>
+
+        <span class="cov8" title="1">data.ProductVersion = types.StringValue(restInfo.ProductVersion)
+        data.APIVersion = types.StringValue(apiVersion)
+
+        tflog.Debug(ctx, fmt.Sprintf("read a data source: %#v", data))
+
+        // Save data into Terraform state
+        resp.Diagnostics.Append(resp.State.Set(ctx, &amp;data)...)</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package provider
+
+import (
+        "context"
+        "fmt"
+        "regexp"
+
+        "github.com/hashicorp/terraform-plugin-framework/datasource"
+        "github.com/hashicorp/terraform-plugin-framework/diag"
+        "github.com/hashicorp/terraform-plugin-framework/provider"
+        "github.com/hashicorp/terraform-plugin-framework/provider/schema"
+        "github.com/hashicorp/terraform-plugin-framework/resource"
+        "github.com/hashicorp/terraform-plugin-framework/types"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/grid"
+)
+
+// Ensure StorageGRIDProvider satisfies various provider interfaces.
+var _ provider.Provider = &amp;StorageGRIDProvider{}
+
+// apiVersionRegexp accepts 4 or v4
+var apiVersionRegexp = regexp.MustCompile(`^[vV]?[0-9]+$`)
+
+// StorageGRIDProvider defines the provider implementation.
+type StorageGRIDProvider struct {
+        // version is set to the provider version on release, "dev" when the
+        // provider is built and ran locally, and "test" when running acceptance
+        // testing.
+        version string
+}
+
+// ConnectionProfileModel associate a connection profile with a name
+type ConnectionProfileModel struct {
+        Name          types.String `tfsdk:"name"`
+        Hostname      types.String `tfsdk:"hostname"`
+        Username      types.String `tfsdk:"username"`
+        Password      types.String `tfsdk:"password"`
+        AccountID     types.String `tfsdk:"account_id"`
+        ValidateCerts types.Bool   `tfsdk:"validate_certs"`
+        CACertFile    types.String `tfsdk:"ca_cert_file"`
+        APIVersion    types.String `tfsdk:"api_version"`
+}
+
+// StorageGRIDProviderModel describes the provider data model.
+type StorageGRIDProviderModel struct {
+        ConnectionProfiles types.List `tfsdk:"connection_profiles"`
+}
+
+// Metadata defines the provider type name for inclusion in each data source and resource type name
+func (p *StorageGRIDProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) <span class="cov8" title="1">{
+        resp.TypeName = "netapp-storagegrid"
+        resp.Version = p.version
+}</span>
+
+// Schema defines the schema for provider-level configuration.
+func (p *StorageGRIDProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) <span class="cov8" title="1">{
+        resp.Schema = schema.Schema{
+                MarkdownDescription: "Use the NetApp StorageGRID provider to manage StorageGRID with the Grid Management API and the Tenant Management API.",
+                Attributes: map[string]schema.Attribute{
+                        "connection_profiles": schema.ListNestedAttribute{
+                                MarkdownDescription: "Define connection and credentials. Resources and data sources select a profile with `cx_profile_name`.",
+                                Required:            true,
+                                NestedObject: schema.NestedAttributeObject{
+                                        Attributes: map[string]schema.Attribute{
+                                                "name": schema.StringAttribute{
+                                                        MarkdownDescription: "Profile name",
+                                                        Required:            true,
+                                                },
+                                                "hostname": schema.StringAttribute{
+                                                        MarkdownDescription: "IP address or FQDN of an Admin Node, or of a load balancer endpoint for the management interface. A port can be added, as in `grid.example.com:8443`.",
+                                                        Required:            true,
+                                                },
+                                                "username": schema.StringAttribute{
+                                                        MarkdownDescription: "User name. A local or a federated user of the grid, or of the tenant when `account_id` is set.",
+                                                        Required:            true,
+                                                },
+                                                "password": schema.StringAttribute{
+                                                        MarkdownDescription: "Password for username",
+                                                        Required:            true,
+                                                        Sensitive:           true,
+                                                },
+                                                "account_id": schema.StringAttribute{
+                                                        MarkdownDescription: "ID of a tenant account. When set, the profile signs in to the tenant and uses the Tenant Management API. When not set, the profile signs in to the grid and uses the Grid Management API.",
+                                                        Optional:            true,
+                                                },
+                                                "validate_certs": schema.BoolAttribute{
+                                                        MarkdownDescription: "Whether to enforce SSL certificate validation, defaults to true.",
+                                                        Optional:            true,
+                                                },
+                                                "ca_cert_file": schema.StringAttribute{
+                                                        MarkdownDescription: "Path to a CA certificate file, to validate the certificate of StorageGRID.",
+                                                        Optional:            true,
+                                                },
+                                                "api_version": schema.StringAttribute{
+                                                        MarkdownDescription: "Version of the management API to use, `v3` or `v4`. By default, `v4` is used with StorageGRID 11.8 or later, and `v3` with earlier releases.",
+                                                        Optional:            true,
+                                                },
+                                        },
+                                },
+                        },
+                },
+        }
+}</span>
+
+// Configure shared clients for data source and resource implementations.
+func (p *StorageGRIDProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) <span class="cov8" title="1">{
+        var data StorageGRIDProviderModel
+
+        resp.Diagnostics.Append(req.Config.Get(ctx, &amp;data)...)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                tflog.Error(ctx, "unable to read the provider configuration")
+                return
+        }</span>
+
+        <span class="cov8" title="1">if data.ConnectionProfiles.IsUnknown() </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError("no connection profiles", "At least one connection profile must be defined, and its value must be known.")
+                return
+        }</span>
+        <span class="cov8" title="1">if len(data.ConnectionProfiles.Elements()) == 0 </span><span class="cov0" title="0">{
+                resp.Diagnostics.AddError("no connection profile", "At least one connection profile must be defined.")
+                return
+        }</span>
+        <span class="cov8" title="1">var profileModels []ConnectionProfileModel
+        resp.Diagnostics.Append(data.ConnectionProfiles.ElementsAs(ctx, &amp;profileModels, false)...)
+        if resp.Diagnostics.HasError() </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">connectionProfiles := make(map[string]connection.Profile, len(profileModels))
+        for _, model := range profileModels </span><span class="cov8" title="1">{
+                name := model.Name.ValueString()
+                if !requireKnownValue(&amp;resp.Diagnostics, name, "name", model.Name) </span><span class="cov0" title="0">{
+                        return
+                }</span>
+                <span class="cov8" title="1">if _, found := connectionProfiles[name]; found </span><span class="cov0" title="0">{
+                        resp.Diagnostics.AddError("Invalid configuration", fmt.Sprintf("connection profile '%s' is defined more than once.", name))
+                        return
+                }</span>
+                <span class="cov8" title="1">for attribute, value := range map[string]types.String{"hostname": model.Hostname, "username": model.Username, "password": model.Password} </span><span class="cov8" title="1">{
+                        if !requireKnownValue(&amp;resp.Diagnostics, name, attribute, value) </span><span class="cov0" title="0">{
+                                return
+                        }</span>
+                }
+                <span class="cov8" title="1">for attribute, value := range map[string]types.String{"account_id": model.AccountID, "ca_cert_file": model.CACertFile, "api_version": model.APIVersion} </span><span class="cov8" title="1">{
+                        if value.IsUnknown() </span><span class="cov0" title="0">{
+                                resp.Diagnostics.AddError("Unknown value", fmt.Sprintf("%s of connection profile '%s' must be known when the provider is configured.", attribute, name))
+                                return
+                        }</span>
+                }
+                <span class="cov8" title="1">if model.ValidateCerts.IsUnknown() </span><span class="cov0" title="0">{
+                        resp.Diagnostics.AddError("Unknown value", fmt.Sprintf("validate_certs of connection profile '%s' must be known when the provider is configured.", name))
+                        return
+                }</span>
+                <span class="cov8" title="1">if !model.APIVersion.IsNull() &amp;&amp; !apiVersionRegexp.MatchString(model.APIVersion.ValueString()) </span><span class="cov0" title="0">{
+                        resp.Diagnostics.AddError("Invalid configuration",
+                                fmt.Sprintf("api_version of connection profile '%s' must be a version like v3 or v4, got '%s'.", name, model.APIVersion.ValueString()))
+                        return
+                }</span>
+
+                <span class="cov8" title="1">validateCerts := true
+                if !model.ValidateCerts.IsNull() </span><span class="cov8" title="1">{
+                        validateCerts = model.ValidateCerts.ValueBool()
+                }</span>
+                <span class="cov8" title="1">connectionProfiles[name] = connection.Profile{
+                        Hostname:      model.Hostname.ValueString(),
+                        Username:      model.Username.ValueString(),
+                        Password:      model.Password.ValueString(),
+                        AccountID:     model.AccountID.ValueString(),
+                        ValidateCerts: validateCerts,
+                        CACertFile:    model.CACertFile.ValueString(),
+                        APIVersion:    model.APIVersion.ValueString(),
+                }</span>
+        }
+
+        <span class="cov8" title="1">config := &amp;connection.Config{
+                ConnectionProfiles: connectionProfiles,
+                Version:            p.version,
+        }
+        resp.DataSourceData = config
+        resp.ResourceData = config</span>
+}
+
+// requireKnownValue reports an error unless value is set, and known.
+func requireKnownValue(diags *diag.Diagnostics, profileName string, attribute string, value types.String) bool <span class="cov8" title="1">{
+        if value.IsUnknown() </span><span class="cov0" title="0">{
+                diags.AddError("Unknown value", fmt.Sprintf("%s of connection profile '%s' must be known when the provider is configured.", attribute, profileName))
+                return false
+        }</span>
+        <span class="cov8" title="1">if value.IsNull() || value.ValueString() == "" </span><span class="cov0" title="0">{
+                diags.AddError("Missing required attribute", fmt.Sprintf("%s is required for connection profile '%s'.", attribute, profileName))
+                return false
+        }</span>
+        <span class="cov8" title="1">return true</span>
+}
+
+// Resources defines the provider's resources.
+func (p *StorageGRIDProvider) Resources(ctx context.Context) []func() resource.Resource <span class="cov8" title="1">{
+        return []func() resource.Resource{
+                // scripts/create_resource.bash creates a new resource, and tells you what to add here.
+                grid.NewGridAccountResource,
+        }
+}</span>
+
+// DataSources defines the provider's data sources.
+func (p *StorageGRIDProvider) DataSources(ctx context.Context) []func() datasource.DataSource <span class="cov8" title="1">{
+        return []func() datasource.DataSource{
+                grid.NewGridProductVersionDataSource,
+                grid.NewGridAccountDataSource,
+                grid.NewGridAccountsDataSource,
+                grid.NewGridInfoDataSource,
+        }
+}</span>
+
+// New creates a provider instance.
+func New(version string) func() provider.Provider <span class="cov8" title="1">{
+        return func() provider.Provider </span><span class="cov8" title="1">{
+                return &amp;StorageGRIDProvider{
+                        version: version,
+                }
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package provider
+
+import (
+        "fmt"
+        "os"
+        "strconv"
+        "strings"
+        "testing"
+
+        "github.com/hashicorp/terraform-plugin-framework/providerserver"
+        "github.com/hashicorp/terraform-plugin-go/tfprotov6"
+)
+
+// TestAccProfileName is the name of the connection profile defined by TestAccProviderConfig.
+// Acceptance tests use it as cx_profile_name.
+const TestAccProfileName = "grid1"
+
+// TestAccProtoV6ProviderFactories are used to instantiate a provider during
+// acceptance testing. The factory function will be invoked for every Terraform
+// CLI command executed to create a provider server to which the CLI can
+// reattach.
+var TestAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
+        "netapp-storagegrid": providerserver.NewProtocol6WithError(New("test")()),
+}
+
+// TestAccPreCheck is a function that can be used to perform pre-checks before an acceptance test.
+// The tests need a StorageGRID system: see TestAccProviderConfig for the environment variables.
+func TestAccPreCheck(t *testing.T) <span class="cov8" title="1">{
+        for _, name := range []string{"TF_ACC_STORAGEGRID_HOST", "TF_ACC_STORAGEGRID_USER", "TF_ACC_STORAGEGRID_PASS"} </span><span class="cov8" title="1">{
+                if os.Getenv(name) == "" </span><span class="cov0" title="0">{
+                        t.Fatalf("%s must be set for acceptance tests", name)
+                }</span>
+        }
+}
+
+// TestAccProviderConfig returns the provider block of an acceptance test, with a single connection profile
+// named TestAccProfileName. It is configured with these environment variables:
+//
+//        TF_ACC_STORAGEGRID_HOST        admin node (required)
+//        TF_ACC_STORAGEGRID_USER        user name (required)
+//        TF_ACC_STORAGEGRID_PASS        password (required)
+//        TF_ACC_STORAGEGRID_ACCOUNT_ID  tenant account id, to test the Tenant Management API (optional)
+func TestAccProviderConfig() string <span class="cov8" title="1">{
+        accountID := ""
+        if value := os.Getenv("TF_ACC_STORAGEGRID_ACCOUNT_ID"); value != "" </span><span class="cov0" title="0">{
+                accountID = fmt.Sprintf("account_id = %s", hclString(value))
+        }</span>
+        <span class="cov8" title="1">return fmt.Sprintf(`
+provider "netapp-storagegrid" {
+  connection_profiles = [
+    {
+      name           = %s
+      hostname       = %s
+      username       = %s
+      password       = %s
+      validate_certs = false
+      %s
+    },
+  ]
+}
+`, hclString(TestAccProfileName), hclString(os.Getenv("TF_ACC_STORAGEGRID_HOST")),
+                hclString(os.Getenv("TF_ACC_STORAGEGRID_USER")), hclString(os.Getenv("TF_ACC_STORAGEGRID_PASS")), accountID)</span>
+}
+
+// hclString quotes a value as an HCL string, without interpolation.
+func hclString(value string) string <span class="cov8" title="1">{
+        quoted := strconv.Quote(value)
+        quoted = strings.ReplaceAll(quoted, "${", "$${")
+        quoted = strings.ReplaceAll(quoted, "%{", "%%{")
+        return quoted
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package httpclient
+
+import (
+        "bytes"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "net/http"
+        "strings"
+)
+
+// maxRawBodyInError limits how much of a non JSON response is copied in an error.
+const maxRawBodyInError = 300
+
+// APIError is returned when StorageGRID answers with a status code outside of 2xx.
+//
+// StorageGRID reports errors as:
+//
+//        {"responseTime": "...", "status": "error", "apiVersion": "4.0", "code": 404,
+//         "message": {"text": "...", "key": "..."}, "errors": [...]}
+//
+// The parsing is lenient: message may be a string or an object, errors may hold strings or objects,
+// and the response may not be JSON at all (eg a 502 from a load balancer).
+type APIError struct {
+        StatusCode int
+        Message    string
+        Key        string
+        Details    []string
+        RawBody    string
+}
+
+// Error implements the error interface.
+func (e *APIError) Error() string <span class="cov8" title="1">{
+        var sb strings.Builder
+        fmt.Fprintf(&amp;sb, "StorageGRID returned statusCode %d", e.StatusCode)
+        if e.Message != "" </span><span class="cov8" title="1">{
+                fmt.Fprintf(&amp;sb, ": %s", e.Message)
+        }</span>
+        <span class="cov8" title="1">if e.Key != "" </span><span class="cov8" title="1">{
+                fmt.Fprintf(&amp;sb, " (key: %s)", e.Key)
+        }</span>
+        <span class="cov8" title="1">if len(e.Details) &gt; 0 </span><span class="cov8" title="1">{
+                fmt.Fprintf(&amp;sb, ", details: %s", strings.Join(e.Details, "; "))
+        }</span>
+        <span class="cov8" title="1">if e.Message == "" &amp;&amp; e.RawBody != "" </span><span class="cov0" title="0">{
+                fmt.Fprintf(&amp;sb, ", response: %s", e.RawBody)
+        }</span>
+        <span class="cov8" title="1">return sb.String()</span>
+}
+
+// IsNotFound returns true if err is an APIError for a 404.
+func IsNotFound(err error) bool <span class="cov8" title="1">{
+        var apiErr *APIError
+        return errors.As(err, &amp;apiErr) &amp;&amp; apiErr.StatusCode == http.StatusNotFound
+}</span>
+
+// ParseAPIError builds an APIError from an error response.
+func ParseAPIError(statusCode int, body []byte) *APIError <span class="cov8" title="1">{
+        apiErr := &amp;APIError{StatusCode: statusCode}
+        trimmed := bytes.TrimSpace(body)
+        if len(trimmed) == 0 </span><span class="cov0" title="0">{
+                return apiErr
+        }</span>
+
+        <span class="cov8" title="1">var payload map[string]interface{}
+        if err := json.Unmarshal(trimmed, &amp;payload); err != nil </span><span class="cov0" title="0">{
+                apiErr.RawBody = truncate(string(trimmed))
+                return apiErr
+        }</span>
+
+        <span class="cov8" title="1">switch message := payload["message"].(type) </span>{
+        case string:<span class="cov0" title="0">
+                apiErr.Message = message</span>
+        case map[string]interface{}:<span class="cov8" title="1">
+                apiErr.Message, _ = message["text"].(string)
+                apiErr.Key, _ = message["key"].(string)</span>
+        }
+        <span class="cov8" title="1">if details, ok := payload["errors"].([]interface{}); ok </span><span class="cov8" title="1">{
+                for _, detail := range details </span><span class="cov8" title="1">{
+                        apiErr.Details = append(apiErr.Details, describeDetail(detail))
+                }</span>
+        }
+        <span class="cov8" title="1">if apiErr.Message == "" &amp;&amp; len(apiErr.Details) == 0 </span><span class="cov0" title="0">{
+                apiErr.RawBody = truncate(string(trimmed))
+        }</span>
+        <span class="cov8" title="1">return apiErr</span>
+}
+
+func describeDetail(detail interface{}) string <span class="cov8" title="1">{
+        switch typed := detail.(type) </span>{
+        case string:<span class="cov0" title="0">
+                return typed</span>
+        case map[string]interface{}:<span class="cov8" title="1">
+                if text, ok := typed["text"].(string); ok </span><span class="cov8" title="1">{
+                        return text
+                }</span>
+        }
+        <span class="cov0" title="0">encoded, err := json.Marshal(detail)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Sprintf("%v", detail)
+        }</span>
+        <span class="cov0" title="0">return string(encoded)</span>
+}
+
+func truncate(s string) string <span class="cov0" title="0">{
+        if len(s) &gt; maxRawBodyInError </span><span class="cov0" title="0">{
+                return s[:maxRawBodyInError] + "..."
+        }</span>
+        <span class="cov0" title="0">return s</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package httpclient
+
+import (
+        "bytes"
+        "context"
+        "crypto/tls"
+        "crypto/x509"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "io"
+        "net/http"
+        "net/url"
+        "os"
+        "strings"
+        "sync"
+        "time"
+
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+)
+
+const (
+        // apiRoot is the path prefix of the management APIs, as in https://&lt;host&gt;/api/v4/grid/accounts
+        apiRoot = "api"
+        // authorizeAPI is served with v3 as it exists on every release, whatever the version used for the other calls.
+        authorizeAPI   = "v3/authorize"
+        defaultTimeout = 60 * time.Second
+)
+
+// HTTPProfile defines the connection attributes to build the base URL and to authenticate
+type HTTPProfile struct {
+        // Hostname of an admin node (or load balancer endpoint), with an optional port.  https:// is accepted.
+        Hostname string
+        Username string
+        Password string
+        // AccountID is the tenant account ID, to use the Tenant Management API.  Leave empty for the Grid Management API.
+        AccountID     string
+        ValidateCerts bool
+        CACertFile    string
+}
+
+// HTTPClient represents a client for interaction with the StorageGRID management APIs.
+// It signs in with the username and password, caches the bearer token, and signs in again
+// when the token is rejected (tokens expire after 16 hours by default).
+// It is safe for concurrent use.
+type HTTPClient struct {
+        cxProfile  HTTPProfile
+        baseURL    *url.URL
+        httpClient *http.Client
+        tag        string
+
+        tokenMu sync.Mutex
+        token   string
+}
+
+// NewClient creates a new HTTP client.  No request is sent until the first call to Do.
+func NewClient(cxProfile HTTPProfile, tag string) (*HTTPClient, error) <span class="cov8" title="1">{
+        baseURL, err := parseBaseURL(cxProfile.Hostname)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">if cxProfile.Username == "" || cxProfile.Password == "" </span><span class="cov0" title="0">{
+                return nil, errors.New("StorageGRID requires a username and a password")
+        }</span>
+        <span class="cov8" title="1">tlsConfig := &amp;tls.Config{
+                MinVersion: tls.VersionTLS12,
+                // #nosec G402 -- certificate validation is only skipped when the user sets validate_certs to false
+                InsecureSkipVerify: !cxProfile.ValidateCerts,
+        }
+        if cxProfile.CACertFile != "" </span><span class="cov0" title="0">{
+                caCert, err := os.ReadFile(cxProfile.CACertFile)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("failed to read CA certificate file: %w", err)
+                }</span>
+                <span class="cov0" title="0">caCertPool := x509.NewCertPool()
+                if !caCertPool.AppendCertsFromPEM(caCert) </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("failed to parse CA certificate file %s", cxProfile.CACertFile)
+                }</span>
+                <span class="cov0" title="0">tlsConfig.RootCAs = caCertPool</span>
+        }
+        <span class="cov8" title="1">return &amp;HTTPClient{
+                cxProfile: cxProfile,
+                baseURL:   baseURL,
+                httpClient: &amp;http.Client{
+                        Transport: &amp;http.Transport{
+                                Proxy:           http.ProxyFromEnvironment,
+                                TLSClientConfig: tlsConfig,
+                        },
+                        Timeout: defaultTimeout,
+                },
+                tag: tag,
+        }, nil</span>
+}
+
+func parseBaseURL(hostname string) (*url.URL, error) <span class="cov8" title="1">{
+        host := strings.TrimSpace(hostname)
+        if host == "" </span><span class="cov0" title="0">{
+                return nil, errors.New("StorageGRID hostname is required")
+        }</span>
+        <span class="cov8" title="1">if !strings.Contains(host, "://") </span><span class="cov8" title="1">{
+                host = "https://" + host
+        }</span>
+        <span class="cov8" title="1">baseURL, err := url.Parse(host)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("invalid StorageGRID hostname %q: %w", hostname, err)
+        }</span>
+        <span class="cov8" title="1">if baseURL.Scheme != "https" </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("invalid StorageGRID hostname %q: only https is supported", hostname)
+        }</span>
+        <span class="cov8" title="1">if baseURL.Host == "" </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("invalid StorageGRID hostname %q", hostname)
+        }</span>
+        <span class="cov8" title="1">baseURL.Path = strings.TrimRight(baseURL.Path, "/")
+        return baseURL, nil</span>
+}
+
+// buildURL builds https://&lt;host&gt;/api/&lt;path&gt;.  path is relative to /api, eg v4/grid/accounts
+func (c *HTTPClient) buildURL(path string) string <span class="cov8" title="1">{
+        return c.baseURL.JoinPath(apiRoot, path).String()
+}</span>
+
+// Do sends the API request, and returns the HTTP status code and the response body.
+// path is relative to the API root and starts with the API version, eg v4/grid/accounts
+//
+// An error is only returned if the request could not be sent, or if the sign in failed.
+// A response with a status code &gt;= 300 is not an error at this level.
+func (c *HTTPClient) Do(ctx context.Context, path string, req *Request) (int, []byte, error) <span class="cov8" title="1">{
+        token, err := c.getToken(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return -1, nil, err
+        }</span>
+        <span class="cov8" title="1">statusCode, body, err := c.send(ctx, path, req, token)
+        if err == nil &amp;&amp; statusCode == http.StatusUnauthorized </span><span class="cov0" title="0">{
+                // the token has expired or was revoked: sign in again, and retry once
+                tflog.Debug(ctx, "token was rejected, signing in again")
+                c.invalidateToken(token)
+                token, err = c.getToken(ctx)
+                if err != nil </span><span class="cov0" title="0">{
+                        return -1, nil, err
+                }</span>
+                <span class="cov0" title="0">statusCode, body, err = c.send(ctx, path, req, token)</span>
+        }
+        <span class="cov8" title="1">return statusCode, body, err</span>
+}
+
+func (c *HTTPClient) send(ctx context.Context, path string, req *Request, token string) (int, []byte, error) <span class="cov8" title="1">{
+        httpReq, err := req.buildHTTPReq(c.buildURL(path))
+        if err != nil </span><span class="cov0" title="0">{
+                return -1, nil, err
+        }</span>
+        <span class="cov8" title="1">httpReq = httpReq.WithContext(ctx)
+        httpReq.Header.Set("Authorization", "Bearer "+token)
+        return c.roundTrip(ctx, httpReq)</span>
+}
+
+func (c *HTTPClient) roundTrip(ctx context.Context, httpReq *http.Request) (int, []byte, error) <span class="cov8" title="1">{
+        httpReq.Header.Set("Accept", "application/json")
+        httpReq.Header.Set("Cache-Control", "no-cache")
+        if httpReq.Body != nil </span><span class="cov8" title="1">{
+                httpReq.Header.Set("Content-Type", "application/json")
+        }</span>
+        <span class="cov8" title="1">httpReq.Header.Set("User-Agent", c.tag)
+
+        tflog.Debug(ctx, fmt.Sprintf("sending: %s %s", httpReq.Method, httpReq.URL.String()))
+        httpRes, err := c.httpClient.Do(httpReq)
+        if err != nil </span><span class="cov0" title="0">{
+                tflog.Error(ctx, fmt.Sprintf("HTTP request failed: %s %s: %s", httpReq.Method, httpReq.URL.String(), err))
+                return -1, nil, err
+        }</span>
+        <span class="cov8" title="1">defer httpRes.Body.Close()
+
+        body, err := io.ReadAll(httpRes.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                tflog.Error(ctx, fmt.Sprintf("HTTP response read failed: %s, statusCode: %d", err, httpRes.StatusCode))
+                return httpRes.StatusCode, nil, err
+        }</span>
+        <span class="cov8" title="1">tflog.Debug(ctx, fmt.Sprintf("received: %s %s %d", httpReq.Method, httpReq.URL.String(), httpRes.StatusCode))
+        return httpRes.StatusCode, body, nil</span>
+}
+
+// getToken returns the cached token, signing in first if needed.
+func (c *HTTPClient) getToken(ctx context.Context) (string, error) <span class="cov8" title="1">{
+        c.tokenMu.Lock()
+        defer c.tokenMu.Unlock()
+        if c.token != "" </span><span class="cov8" title="1">{
+                return c.token, nil
+        }</span>
+        <span class="cov8" title="1">token, err := c.authorize(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">c.token = token
+        return token, nil</span>
+}
+
+// invalidateToken clears the cached token, unless another goroutine already replaced it.
+func (c *HTTPClient) invalidateToken(rejected string) <span class="cov0" title="0">{
+        c.tokenMu.Lock()
+        defer c.tokenMu.Unlock()
+        if c.token == rejected </span><span class="cov0" title="0">{
+                c.token = ""
+        }</span>
+}
+
+// authorize signs in and returns a bearer token.
+// The body is deliberately never logged, as it holds the password.
+func (c *HTTPClient) authorize(ctx context.Context) (string, error) <span class="cov8" title="1">{
+        payload := map[string]interface{}{
+                "username":  c.cxProfile.Username,
+                "password":  c.cxProfile.Password,
+                "cookie":    false,
+                "csrfToken": false,
+        }
+        if c.cxProfile.AccountID != "" </span><span class="cov0" title="0">{
+                payload["accountId"] = c.cxProfile.AccountID
+        }</span>
+        <span class="cov8" title="1">body, err := json.Marshal(payload)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.buildURL(authorizeAPI), bytes.NewReader(body))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">statusCode, response, err := c.roundTrip(ctx, httpReq)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("unable to sign in to StorageGRID: %w", err)
+        }</span>
+        <span class="cov8" title="1">if statusCode &lt; 200 || statusCode &gt;= 300 </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("unable to sign in to StorageGRID: %w", ParseAPIError(statusCode, response))
+        }</span>
+        <span class="cov8" title="1">var result struct {
+                Data string `json:"data"`
+        }
+        if err := json.Unmarshal(response, &amp;result); err != nil || result.Data == "" </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("unable to sign in to StorageGRID: no token in the response, statusCode %d", statusCode)
+        }</span>
+        <span class="cov8" title="1">return result.Data, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package httpclient
+
+import (
+        "bytes"
+        "encoding/json"
+        "io"
+        "net/http"
+        "net/url"
+        "reflect"
+)
+
+// Request represents a request to a REST API
+type Request struct {
+        Method string
+        // Body is marshalled as JSON.  nil means no body.
+        // It is an interface{} and not a map because some StorageGRID APIs expect a JSON array.
+        Body  interface{}
+        Query url.Values
+}
+
+// hasBody returns false for nil and for typed nil values (eg a nil map).
+func hasBody(body interface{}) bool <span class="cov8" title="1">{
+        if body == nil </span><span class="cov8" title="1">{
+                return false
+        }</span>
+        <span class="cov8" title="1">value := reflect.ValueOf(body)
+        switch value.Kind() </span>{
+        case reflect.Map, reflect.Slice, reflect.Ptr, reflect.Interface:<span class="cov8" title="1">
+                return !value.IsNil()</span>
+        }
+        <span class="cov0" title="0">return true</span>
+}
+
+// buildHTTPReq builds an HTTP request, without authentication.
+func (r *Request) buildHTTPReq(requestURL string) (*http.Request, error) <span class="cov8" title="1">{
+        var body io.Reader
+        if hasBody(r.Body) </span><span class="cov8" title="1">{
+                bodyJSON, err := json.Marshal(r.Body)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">body = bytes.NewReader(bodyJSON)</span>
+        }
+        <span class="cov8" title="1">req, err := http.NewRequest(r.Method, requestURL, body)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">if len(r.Query) != 0 </span><span class="cov8" title="1">{
+                req.URL.RawQuery = r.Query.Encode()
+        }</span>
+        <span class="cov8" title="1">return req, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package restclient
+
+import (
+        "context"
+        "fmt"
+        "net/url"
+        "strings"
+        "sync"
+
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/httpclient"
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+const (
+        defaultMaxConcurrentRequests = 6
+        // pageSize is the value of the limit parameter used to read paginated lists.
+        pageSize = 20
+        // probeAPIVersion is used to read the product version, before we know which version to use.
+        probeAPIVersion = "v3"
+)
+
+// ConnectionProfile describes how to reach and sign in to a grid, or to a tenant of a grid.
+type ConnectionProfile struct {
+        Hostname string
+        Username string
+        Password string
+        // AccountID is the ID of a tenant account.  When set, the client uses the Tenant Management API (/org),
+        // otherwise it uses the Grid Management API (/grid).
+        AccountID     string
+        ValidateCerts bool
+        CACertFile    string
+        // APIVersion forces the API version, eg v4.  By default it is selected from the StorageGRID version.
+        APIVersion            string
+        MaxConcurrentRequests int
+}
+
+// RestClient to interact with the StorageGRID REST APIs.
+//
+// All the state that is worth sharing (token, API version, request throttling) lives in a session shared by
+// every copy of the client.  A RestClient only adds the context used for logging: use WithContext to get one for
+// the current Terraform operation.
+type RestClient struct {
+        ctx context.Context
+        s   *session
+}
+
+type session struct {
+        connectionProfile ConnectionProfile
+        httpClient        *httpclient.HTTPClient
+        requestSlots      chan struct{}
+
+        versionMu  sync.Mutex
+        apiVersion string
+        sgVersion  *SGVersion
+}
+
+// NewClient creates a new REST client.  The client signs in when it sends its first request.
+// tag is sent as the User-Agent, for telemetry.
+func NewClient(ctx context.Context, cxProfile ConnectionProfile, tag string) (*RestClient, error) <span class="cov8" title="1">{
+        httpClient, err := httpclient.NewClient(httpclient.HTTPProfile{
+                Hostname:      cxProfile.Hostname,
+                Username:      cxProfile.Username,
+                Password:      cxProfile.Password,
+                AccountID:     cxProfile.AccountID,
+                ValidateCerts: cxProfile.ValidateCerts,
+                CACertFile:    cxProfile.CACertFile,
+        }, tag)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">maxConcurrentRequests := cxProfile.MaxConcurrentRequests
+        if maxConcurrentRequests &lt;= 0 </span><span class="cov8" title="1">{
+                maxConcurrentRequests = defaultMaxConcurrentRequests
+        }</span>
+        <span class="cov8" title="1">return &amp;RestClient{
+                ctx: ctx,
+                s: &amp;session{
+                        connectionProfile: cxProfile,
+                        httpClient:        httpClient,
+                        requestSlots:      make(chan struct{}, maxConcurrentRequests),
+                },
+        }, nil</span>
+}
+
+// WithContext returns a client that shares the session of r, and logs with ctx.
+func (r *RestClient) WithContext(ctx context.Context) *RestClient <span class="cov8" title="1">{
+        return &amp;RestClient{ctx: ctx, s: r.s}
+}</span>
+
+// IsTenant returns true if the client uses the Tenant Management API.
+func (r *RestClient) IsTenant() bool <span class="cov8" title="1">{
+        return r.s.connectionProfile.AccountID != ""
+}</span>
+
+// apiRoot returns grid or org: the first element of the path of the configuration APIs.
+func (r *RestClient) apiRoot() string <span class="cov8" title="1">{
+        if r.IsTenant() </span><span class="cov0" title="0">{
+                return "org"
+        }</span>
+        <span class="cov8" title="1">return "grid"</span>
+}
+
+// Version returns the StorageGRID software version, which is read the first time it is needed.
+// Use it to check that a feature is supported: client.Version() then version.AtLeast(11, 9)
+func (r *RestClient) Version() (SGVersion, error) <span class="cov8" title="1">{
+        r.s.versionMu.Lock()
+        defer r.s.versionMu.Unlock()
+        if err := r.resolveSGVersionLocked(); err != nil </span><span class="cov0" title="0">{
+                return SGVersion{}, err
+        }</span>
+        <span class="cov8" title="1">return *r.s.sgVersion, nil</span>
+}
+
+// APIVersion returns the API version used in the requests, eg v4.
+func (r *RestClient) APIVersion() (string, error) <span class="cov8" title="1">{
+        r.s.versionMu.Lock()
+        defer r.s.versionMu.Unlock()
+        if r.s.apiVersion != "" </span><span class="cov8" title="1">{
+                return r.s.apiVersion, nil
+        }</span>
+        <span class="cov8" title="1">if forced := NormalizeAPIVersion(r.s.connectionProfile.APIVersion); forced != "" </span><span class="cov0" title="0">{
+                r.s.apiVersion = forced
+                return forced, nil
+        }</span>
+        <span class="cov8" title="1">if err := r.resolveSGVersionLocked(); err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">r.s.apiVersion = apiVersionFor(*r.s.sgVersion)
+        tflog.Debug(r.ctx, fmt.Sprintf("StorageGRID %s, using API %s", r.s.sgVersion.Full, r.s.apiVersion))
+        return r.s.apiVersion, nil</span>
+}
+
+// resolveSGVersionLocked reads the product version.  versionMu must be held.
+func (r *RestClient) resolveSGVersionLocked() error <span class="cov8" title="1">{
+        if r.s.sgVersion != nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">path := probeAPIVersion + "/" + r.apiRoot() + "/config/product-version"
+        statusCode, body, err := r.s.httpClient.Do(r.ctx, path, &amp;httpclient.Request{Method: "GET"})
+        response, err := unmarshalResponse(statusCode, body, err)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("unable to read the StorageGRID version from GET %s: %w", path, err)
+        }</span>
+        <span class="cov8" title="1">object, ok := response.Object()
+        if !ok </span><span class="cov0" title="0">{
+                return fmt.Errorf("unable to read the StorageGRID version from GET %s: %w", path, errUnexpectedData)
+        }</span>
+        <span class="cov8" title="1">full, _ := object["productVersion"].(string)
+        version, err := ParseSGVersion(full)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">r.s.sgVersion = &amp;version
+        return nil</span>
+}
+
+// NewQuery is used to provide query parameters.  Set and Add functions are inherited from url.Values
+func (r *RestClient) NewQuery() *RestQuery <span class="cov8" title="1">{
+        return &amp;RestQuery{Values: url.Values{}}
+}</span>
+
+// RestQuery is a wrapper around url.Values.
+type RestQuery struct {
+        url.Values
+}
+
+// SetValues adds a set of key, value.  Empty values are ignored.
+func (q *RestQuery) SetValues(keyValues map[string]interface{}) <span class="cov0" title="0">{
+        for k, v := range keyValues </span><span class="cov0" title="0">{
+                value := fmt.Sprintf("%v", v)
+                if value != "" </span><span class="cov0" title="0">{
+                        q.Set(k, value)
+                }</span>
+        }
+}
+
+func (q *RestQuery) clone() *RestQuery <span class="cov8" title="1">{
+        clone := &amp;RestQuery{Values: url.Values{}}
+        if q != nil </span><span class="cov0" title="0">{
+                for k, v := range q.Values </span><span class="cov0" title="0">{
+                        clone.Values[k] = append([]string(nil), v...)
+                }</span>
+        }
+        <span class="cov8" title="1">return clone</span>
+}
+
+// callAPIMethod can be used to make a request to any REST API method.
+// path is relative to the API version, eg grid/accounts
+func (r *RestClient) callAPIMethod(method string, path string, query *RestQuery, body interface{}) (int, RestResponse, error) <span class="cov8" title="1">{
+        apiVersion, err := r.APIVersion()
+        if err != nil </span><span class="cov0" title="0">{
+                return -1, RestResponse{}, err
+        }</span>
+
+        <span class="cov8" title="1">r.s.requestSlots &lt;- struct{}{}
+        defer func() </span><span class="cov8" title="1">{ &lt;-r.s.requestSlots }</span>()
+
+        <span class="cov8" title="1">values := url.Values{}
+        if query != nil </span><span class="cov8" title="1">{
+                values = query.Values
+        }</span>
+        <span class="cov8" title="1">fullPath := apiVersion + "/" + strings.TrimPrefix(path, "/")
+        if body != nil </span><span class="cov8" title="1">{
+                tflog.Debug(r.ctx, fmt.Sprintf("request body for %s %s", method, fullPath), map[string]interface{}{"body": utils.RedactSensitive(body)})
+        }</span>
+        <span class="cov8" title="1">statusCode, rawBody, httpClientErr := r.s.httpClient.Do(r.ctx, fullPath, &amp;httpclient.Request{
+                Method: method,
+                Body:   body,
+                Query:  values,
+        })
+        response, err := unmarshalResponse(statusCode, rawBody, httpClientErr)
+        if err != nil </span><span class="cov8" title="1">{
+                tflog.Debug(r.ctx, fmt.Sprintf("%s %s failed, statusCode %d: %s", method, fullPath, statusCode, err))
+                return statusCode, response, err
+        }</span>
+        <span class="cov8" title="1">tflog.Debug(r.ctx, fmt.Sprintf("response data for %s %s", method, fullPath), map[string]interface{}{"data": utils.RedactSensitive(response.Data)})
+        return statusCode, response, nil</span>
+}
+
+// CallCreateMethod returns response from POST results.  An error is reported if an error is received.
+func (r *RestClient) CallCreateMethod(path string, query *RestQuery, body interface{}) (int, RestResponse, error) <span class="cov8" title="1">{
+        return r.callAPIMethod("POST", path, query, body)
+}</span>
+
+// CallUpdateMethod returns response from PUT results.  An error is reported if an error is received.
+// StorageGRID uses PUT to replace a resource.
+func (r *RestClient) CallUpdateMethod(path string, query *RestQuery, body interface{}) (int, RestResponse, error) <span class="cov8" title="1">{
+        return r.callAPIMethod("PUT", path, query, body)
+}</span>
+
+// CallPatchMethod returns response from PATCH results.  An error is reported if an error is received.
+// StorageGRID uses PATCH to modify some fields of a resource, on the APIs that support it.
+func (r *RestClient) CallPatchMethod(path string, query *RestQuery, body interface{}) (int, RestResponse, error) <span class="cov0" title="0">{
+        return r.callAPIMethod("PATCH", path, query, body)
+}</span>
+
+// CallDeleteMethod returns response from DELETE results.  An error is reported if an error is received,
+// including a 404: use IsNotFound if the resource may already be gone.
+func (r *RestClient) CallDeleteMethod(path string, query *RestQuery, body interface{}) (int, RestResponse, error) <span class="cov8" title="1">{
+        return r.callAPIMethod("DELETE", path, query, body)
+}</span>
+
+// GetData returns the data of a single GET, whatever its type: an object, a list of objects, a list of strings, a
+// string.  It is nil when the response has no data.  Use it for the APIs that do not return an object.
+func (r *RestClient) GetData(path string, query *RestQuery) (int, interface{}, error) <span class="cov8" title="1">{
+        statusCode, response, err := r.callAPIMethod("GET", path, query, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return statusCode, nil, err
+        }</span>
+        <span class="cov8" title="1">return statusCode, response.Data, nil</span>
+}
+
+// GetNilOrObject returns nil if the resource is not found (404) or a single object.
+func (r *RestClient) GetNilOrObject(path string, query *RestQuery) (int, map[string]interface{}, error) <span class="cov8" title="1">{
+        statusCode, response, err := r.callAPIMethod("GET", path, query, nil)
+        if err != nil </span><span class="cov8" title="1">{
+                if IsNotFound(err) </span><span class="cov8" title="1">{
+                        return statusCode, nil, nil
+                }</span>
+                <span class="cov0" title="0">return statusCode, nil, err</span>
+        }
+        <span class="cov8" title="1">object, ok := response.Object()
+        if !ok </span><span class="cov0" title="0">{
+                return statusCode, nil, fmt.Errorf("GET %s: %w, expected an object, got %T", path, errUnexpectedData, response.Data)
+        }</span>
+        <span class="cov8" title="1">return statusCode, object, nil</span>
+}
+
+// GetZeroOrMoreObjects returns the list of objects of a single GET.
+// StorageGRID may split large lists in pages, use GetAllObjects for the APIs that support pagination.
+func (r *RestClient) GetZeroOrMoreObjects(path string, query *RestQuery) (int, []map[string]interface{}, error) <span class="cov8" title="1">{
+        statusCode, response, err := r.callAPIMethod("GET", path, query, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return statusCode, nil, err
+        }</span>
+        <span class="cov8" title="1">objects, ok := response.List()
+        if !ok </span><span class="cov0" title="0">{
+                return statusCode, nil, fmt.Errorf("GET %s: %w, expected a list of objects, got %T", path, errUnexpectedData, response.Data)
+        }</span>
+        <span class="cov8" title="1">return statusCode, objects, nil</span>
+}
+
+// GetAllObjects returns all the objects of an API that supports pagination (limit and marker parameters),
+// like grid/accounts.  The marker is the id of the last object of the previous page.
+func (r *RestClient) GetAllObjects(path string, query *RestQuery) (int, []map[string]interface{}, error) <span class="cov8" title="1">{
+        pageQuery := query.clone()
+        pageQuery.Set("limit", fmt.Sprintf("%d", pageSize))
+        var all []map[string]interface{}
+        statusCode := -1
+        for </span><span class="cov8" title="1">{
+                var page []map[string]interface{}
+                var err error
+                statusCode, page, err = r.GetZeroOrMoreObjects(path, pageQuery)
+                if err != nil </span><span class="cov0" title="0">{
+                        return statusCode, nil, err
+                }</span>
+                <span class="cov8" title="1">if len(page) == 0 </span><span class="cov8" title="1">{
+                        return statusCode, all, nil
+                }</span>
+                <span class="cov8" title="1">last, ok := page[len(page)-1]["id"]
+                if !ok </span><span class="cov0" title="0">{
+                        return statusCode, nil, fmt.Errorf("GET %s: unable to read the next page, the last object has no id", path)
+                }</span>
+                <span class="cov8" title="1">marker := fmt.Sprintf("%v", last)
+                if marker == pageQuery.Get("marker") </span><span class="cov0" title="0">{
+                        // the API ignores the marker, and does not support pagination: this page is the one we already have
+                        return statusCode, all, nil
+                }</span>
+                <span class="cov8" title="1">all = append(all, page...)
+                pageQuery.Set("marker", marker)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package restclient
+
+import (
+        "bytes"
+        "encoding/json"
+        "errors"
+        "fmt"
+
+        "github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient/httpclient"
+)
+
+// APIError is the error returned when StorageGRID answers with a status code outside of 2xx.
+type APIError = httpclient.APIError
+
+// IsNotFound returns true if err is an APIError for a 404.
+func IsNotFound(err error) bool <span class="cov8" title="1">{
+        return httpclient.IsNotFound(err)
+}</span>
+
+// RestResponse is the success envelope used by all StorageGRID management APIs:
+//
+//        {"responseTime": "2024-01-01T00:00:00.000Z", "status": "success", "apiVersion": "4.0", "data": ...}
+//
+// data is an object for a single resource, and an array for a list.  It is absent when the status code is 204.
+type RestResponse struct {
+        StatusCode   int
+        Status       string
+        APIVersion   string
+        ResponseTime string
+        Data         interface{}
+}
+
+// Object returns data as an object.
+func (r RestResponse) Object() (map[string]interface{}, bool) <span class="cov8" title="1">{
+        object, ok := r.Data.(map[string]interface{})
+        return object, ok
+}</span>
+
+// List returns data as a list of objects.  A response without data is an empty list.
+func (r RestResponse) List() ([]map[string]interface{}, bool) <span class="cov8" title="1">{
+        if r.Data == nil </span><span class="cov0" title="0">{
+                return []map[string]interface{}{}, true
+        }</span>
+        <span class="cov8" title="1">items, ok := r.Data.([]interface{})
+        if !ok </span><span class="cov0" title="0">{
+                return nil, false
+        }</span>
+        <span class="cov8" title="1">objects := make([]map[string]interface{}, 0, len(items))
+        for _, item := range items </span><span class="cov8" title="1">{
+                object, ok := item.(map[string]interface{})
+                if !ok </span><span class="cov0" title="0">{
+                        return nil, false
+                }</span>
+                <span class="cov8" title="1">objects = append(objects, object)</span>
+        }
+        <span class="cov8" title="1">return objects, true</span>
+}
+
+// unmarshalResponse converts the HTTP response into a RestResponse, or into an APIError if the call failed.
+func unmarshalResponse(statusCode int, body []byte, httpClientErr error) (RestResponse, error) <span class="cov8" title="1">{
+        response := RestResponse{StatusCode: statusCode}
+        if httpClientErr != nil </span><span class="cov0" title="0">{
+                return response, httpClientErr
+        }</span>
+        <span class="cov8" title="1">if statusCode &lt; 200 || statusCode &gt;= 300 </span><span class="cov8" title="1">{
+                return response, httpclient.ParseAPIError(statusCode, body)
+        }</span>
+        <span class="cov8" title="1">if len(bytes.TrimSpace(body)) == 0 </span><span class="cov8" title="1">{
+                // 204 No Content, as returned by most DELETE
+                return response, nil
+        }</span>
+        <span class="cov8" title="1">var envelope struct {
+                ResponseTime string      `json:"responseTime"`
+                Status       string      `json:"status"`
+                APIVersion   string      `json:"apiVersion"`
+                Data         interface{} `json:"data"`
+        }
+        // UseNumber keeps large integers (quotas, counters) exact, instead of converting them to float64
+        decoder := json.NewDecoder(bytes.NewReader(body))
+        decoder.UseNumber()
+        if err := decoder.Decode(&amp;envelope); err != nil </span><span class="cov0" title="0">{
+                return response, fmt.Errorf("unable to decode the response, statusCode %d: %w", statusCode, err)
+        }</span>
+        <span class="cov8" title="1">response.ResponseTime = envelope.ResponseTime
+        response.Status = envelope.Status
+        response.APIVersion = envelope.APIVersion
+        response.Data = envelope.Data
+        return response, nil</span>
+}
+
+var errUnexpectedData = errors.New("unexpected data in the response")
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package restclient
+
+import (
+        "fmt"
+        "strconv"
+        "strings"
+        "unicode"
+)
+
+// SGVersion is the StorageGRID software version.
+type SGVersion struct {
+        Major int
+        Minor int
+        // Full is the version as reported by the product-version API, eg 11.9.0
+        Full string
+}
+
+// AtLeast returns true if the version is equal to or newer than major.minor.
+func (v SGVersion) AtLeast(major int, minor int) bool <span class="cov8" title="1">{
+        if v.Major != major </span><span class="cov8" title="1">{
+                return v.Major &gt; major
+        }</span>
+        <span class="cov0" title="0">return v.Minor &gt;= minor</span>
+}
+
+// ParseSGVersion parses the productVersion reported by StorageGRID, eg 11.9.0 or 12.0.0-20250101.1234.abcdef
+func ParseSGVersion(full string) (SGVersion, error) <span class="cov8" title="1">{
+        parts := strings.SplitN(strings.TrimSpace(full), ".", 3)
+        if len(parts) &lt; 2 </span><span class="cov0" title="0">{
+                return SGVersion{}, fmt.Errorf("unable to parse StorageGRID version %q", full)
+        }</span>
+        <span class="cov8" title="1">major, err := strconv.Atoi(leadingDigits(parts[0]))
+        if err != nil </span><span class="cov0" title="0">{
+                return SGVersion{}, fmt.Errorf("unable to parse StorageGRID version %q", full)
+        }</span>
+        <span class="cov8" title="1">minor, err := strconv.Atoi(leadingDigits(parts[1]))
+        if err != nil </span><span class="cov0" title="0">{
+                return SGVersion{}, fmt.Errorf("unable to parse StorageGRID version %q", full)
+        }</span>
+        <span class="cov8" title="1">return SGVersion{Major: major, Minor: minor, Full: strings.TrimSpace(full)}, nil</span>
+}
+
+func leadingDigits(s string) string <span class="cov8" title="1">{
+        end := 0
+        for end &lt; len(s) &amp;&amp; unicode.IsDigit(rune(s[end])) </span><span class="cov8" title="1">{
+                end++
+        }</span>
+        <span class="cov8" title="1">return s[:end]</span>
+}
+
+// NormalizeAPIVersion accepts 4, v4, or V4 and returns v4.
+func NormalizeAPIVersion(version string) string <span class="cov8" title="1">{
+        version = strings.ToLower(strings.TrimSpace(version))
+        if version == "" </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+        <span class="cov0" title="0">if !strings.HasPrefix(version, "v") </span><span class="cov0" title="0">{
+                version = "v" + version
+        }</span>
+        <span class="cov0" title="0">return version</span>
+}
+
+// apiVersionFor returns the API version to use for a given software version.
+// v4 was introduced with StorageGRID 11.8.
+func apiVersionFor(version SGVersion) string <span class="cov8" title="1">{
+        if version.AtLeast(11, 8) </span><span class="cov8" title="1">{
+                return "v4"
+        }</span>
+        <span class="cov0" title="0">return "v3"</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package utils
+
+import (
+        "context"
+        "errors"
+        "fmt"
+
+        "github.com/hashicorp/terraform-plugin-framework/diag"
+        "github.com/hashicorp/terraform-plugin-log/tflog"
+)
+
+// ErrorHandler creates an error handler to combine logging and reporting errors
+type ErrorHandler struct {
+        Ctx    context.Context
+        diags  *diag.Diagnostics
+        name   string
+        subCtx context.Context
+}
+
+// NewErrorHandler creates an error handler based on current context and TF diagnostics
+func NewErrorHandler(ctx context.Context, diags *diag.Diagnostics) *ErrorHandler <span class="cov8" title="1">{
+        name := "error_handler"
+        return &amp;ErrorHandler{
+                Ctx:    ctx,
+                diags:  diags,
+                name:   name,
+                subCtx: tflog.NewSubsystem(ctx, name, tflog.WithAdditionalLocationOffset(1)),
+        }
+}</span>
+
+// MakeAndLogError builds an error using message and logs the error with tflog
+func (e *ErrorHandler) MakeAndLogError(msg string) error <span class="cov0" title="0">{
+        e.validate()
+        tflog.WithAdditionalLocationOffset(1)
+        tflog.SubsystemError(e.subCtx, e.name, msg)
+        return errors.New(msg)
+}</span>
+
+// MakeAndReportError builds an error using message and logs the error with tflog
+// The error is added to the diagnostic and will be reported by Terraform
+func (e *ErrorHandler) MakeAndReportError(summary string, msg string) error <span class="cov8" title="1">{
+        e.validate()
+        fullMsg := fmt.Sprintf("%s: %s", summary, msg)
+        tflog.SubsystemError(e.subCtx, e.name, msg)
+        e.diags.AddError(summary, msg)
+        return errors.New(fullMsg)
+}</span>
+
+func (e *ErrorHandler) validate() <span class="cov8" title="1">{
+        if e == nil </span><span class="cov0" title="0">{
+                panic("Error handler is not set")</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package utils
+
+import "strings"
+
+const redactedValue = "********"
+
+// sensitiveKeyParts are matched (case insensitive) against JSON keys.
+// StorageGRID bodies carry tenant root passwords, S3 secret keys, tokens, SNMP community strings, ...
+var sensitiveKeyParts = []string{"password", "passphrase", "secret", "token", "privatekey", "credential", "community"}
+
+func isSensitiveKey(key string) bool <span class="cov8" title="1">{
+        lower := strings.ToLower(key)
+        for _, part := range sensitiveKeyParts </span><span class="cov8" title="1">{
+                if strings.Contains(lower, part) </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+// RedactSensitive returns a copy of a decoded JSON value, with the value of every sensitive key masked.
+// It must be used before logging request or response bodies.
+func RedactSensitive(v interface{}) interface{} <span class="cov8" title="1">{
+        switch typed := v.(type) </span>{
+        case map[string]interface{}:<span class="cov8" title="1">
+                out := make(map[string]interface{}, len(typed))
+                for key, value := range typed </span><span class="cov8" title="1">{
+                        if isSensitiveKey(key) </span><span class="cov8" title="1">{
+                                out[key] = redactedValue
+                        }</span> else<span class="cov8" title="1"> {
+                                out[key] = RedactSensitive(value)
+                        }</span>
+                }
+                <span class="cov8" title="1">return out</span>
+        case []interface{}:<span class="cov8" title="1">
+                out := make([]interface{}, len(typed))
+                for index, value := range typed </span><span class="cov8" title="1">{
+                        out[index] = RedactSensitive(value)
+                }</span>
+                <span class="cov8" title="1">return out</span>
+        case []map[string]interface{}:<span class="cov0" title="0">
+                out := make([]interface{}, len(typed))
+                for index, value := range typed </span><span class="cov0" title="0">{
+                        out[index] = RedactSensitive(value)
+                }</span>
+                <span class="cov0" title="0">return out</span>
+        default:<span class="cov8" title="1">
+                return v</span>
+        }
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

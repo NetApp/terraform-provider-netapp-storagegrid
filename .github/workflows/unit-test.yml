@@ -1,0 +1,38 @@
+name: Go Unit Tests
+
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # some unit tests start terraform, and are skipped without it
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+
+      - name: Unit tests
+        run: |
+          export GOFLAGS=-buildvcs=false
+          ./scripts/unittest.sh

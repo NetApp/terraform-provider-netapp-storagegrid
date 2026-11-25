@@ -1,0 +1,52 @@
+name: Check Documentation
+
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+
+permissions:
+  contents: read
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # tfplugindocs runs terraform to read the schema of the provider
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+
+      - name: Check that the resources and the data sources have a documentation page and an example
+        run: ./scripts/check_docs.sh
+
+      - name: Check that the documentation is up to date
+        run: |
+          python3 scripts/generate_docs.py
+          if [ -n "$(git status --porcelain -- docs)" ]; then
+            echo "The documentation is not up to date: run 'python3 scripts/generate_docs.py', and commit the result."
+            git status --porcelain -- docs
+            git diff -- docs
+            exit 1
+          fi
+
+      - name: Check that the examples are formatted
+        run: terraform fmt -check -recursive examples

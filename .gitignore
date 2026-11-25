@@ -1,0 +1,10 @@
+.idea/
+*.DS_Store
+
+# terraform state, and what terraform creates when the examples are run
+*.tfstate
+*.tfstate.backup
+
+# credentials of the examples: copy examples/provider/terraform.tfvars.example
+terraform.tfvars
+*.auto.tfvars

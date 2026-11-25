@@ -1,0 +1,67 @@
+name: Go ACC Tests
+
+# The acceptance tests need a StorageGRID system, and a self-hosted runner that can reach it.
+# They run when the repository variable STORAGEGRID_ACC_TESTS is set to true, which is done once these exist:
+#   secrets TF_ACC_STORAGEGRID_HOST, TF_ACC_STORAGEGRID_USER and TF_ACC_STORAGEGRID_PASS: an Admin Node, and a user of the grid
+#   optional, to run the tests of the org_ resources with the Tenant Management API:
+#     secrets TF_ACC_STORAGEGRID_ACCOUNT_ID, TF_ACC_STORAGEGRID_TENANT_USER and TF_ACC_STORAGEGRID_TENANT_PASS
+# See scripts/acctest.sh.
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: self-hosted
+    concurrency:
+      group: STORAGEGRID-ACC
+      cancel-in-progress: false
+    # because Dependabot doesn't get access to secrets, and we don't need it to run our ACC TEST, let skip them for that user
+    if: ${{ vars.STORAGEGRID_ACC_TESTS == 'true' && github.actor != 'dependabot[bot]' }}
+    env:
+      TF_ACC_STORAGEGRID_HOST: ${{ secrets.TF_ACC_STORAGEGRID_HOST }}
+      TF_ACC_STORAGEGRID_USER: ${{ secrets.TF_ACC_STORAGEGRID_USER }}
+      TF_ACC_STORAGEGRID_PASS: ${{ secrets.TF_ACC_STORAGEGRID_PASS }}
+      TENANT_ACCOUNT_ID: ${{ secrets.TF_ACC_STORAGEGRID_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+
+      - name: Run the acceptance tests of the grid_ resources
+        run: |
+          export GOFLAGS=-buildvcs=false
+          # Use the Terraform binary installed by setup-terraform, instead of downloading one.
+          export TF_ACC_TERRAFORM_PATH=$(which terraform)
+          ./scripts/acctest.sh
+
+      - name: Run the acceptance tests of the org_ resources
+        if: ${{ env.TENANT_ACCOUNT_ID != '' }}
+        env:
+          TF_ACC_STORAGEGRID_USER: ${{ secrets.TF_ACC_STORAGEGRID_TENANT_USER }}
+          TF_ACC_STORAGEGRID_PASS: ${{ secrets.TF_ACC_STORAGEGRID_TENANT_PASS }}
+          TF_ACC_STORAGEGRID_ACCOUNT_ID: ${{ secrets.TF_ACC_STORAGEGRID_ACCOUNT_ID }}
+        run: |
+          export GOFLAGS=-buildvcs=false
+          export TF_ACC_TERRAFORM_PATH=$(which terraform)
+          ./scripts/acctest.sh

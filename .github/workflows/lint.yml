@@ -1,0 +1,47 @@
+name: Go Lint
+
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: "Run CI"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Check the format
+        run: |
+          unformatted=$(gofmt -s -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files are not formatted, run 'gofmt -s -w .':"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      # the version of staticcheck is pinned, so that a new release does not break the build.  setup-go sets
+      # GOTOOLCHAIN=local, so go never downloads a newer toolchain: the pinned version must not require a newer
+      # go than the one in go.mod.  v0.7.0 needs go 1.25.0, v0.8.x needs go 1.26.0.
+      - name: go vet and staticcheck
+        run: |
+          go vet ./...
+          go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...

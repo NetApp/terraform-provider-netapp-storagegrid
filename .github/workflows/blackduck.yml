@@ -1,0 +1,75 @@
+name: Blackduck Scan
+
+# The scan needs the Black Duck server and the self-hosted runner of NetApp: it runs when the repository variable
+# BLACKDUCK_SCAN is true, and the secrets BLACKDUCK_URL and BLACKDUCK_API_TOKEN are set.
+# The version that the scan reports is DETECT_PROJECT_VERSION_NAME of scripts/bd_scan.bash: it must be newer than the
+# latest release, so change it when you release.
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Validate DETECT_PROJECT_VERSION_NAME
+        run: |
+          # the latest release, from the tags: none if nothing was released yet
+          LATEST_VERSION=$(git tag -l 'v*' | sed 's/^v//' | sort -V | tail -n 1)
+          CURRENT_VERSION=$(sed -n 's/^export DETECT_PROJECT_VERSION_NAME=\([0-9][0-9.]*\).*/\1/p' scripts/bd_scan.bash)
+          echo "Latest version released: ${LATEST_VERSION:-none}"
+          echo "Current version for scanning: ${CURRENT_VERSION:-not found}"
+
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "Error: DETECT_PROJECT_VERSION_NAME is not set to a version in scripts/bd_scan.bash."
+            exit 1
+          fi
+
+          # Compare versions - current should be greater than latest
+          if [ -n "$LATEST_VERSION" ] && [ "$(printf '%s\n' "$LATEST_VERSION" "$CURRENT_VERSION" | sort -V | tail -n 1)" == "$LATEST_VERSION" ]; then
+            echo "Error: DETECT_PROJECT_VERSION_NAME ($CURRENT_VERSION) must be greater than the latest release version ($LATEST_VERSION) in scripts/bd_scan.bash."
+            exit 1
+          fi
+
+          echo "Version validation passed: $CURRENT_VERSION is newer than ${LATEST_VERSION:-the releases (none)}"
+
+  scan:
+    needs: validate-version
+    runs-on: self-hosted
+    if: ${{ vars.BLACKDUCK_SCAN == 'true' && github.actor != 'dependabot[bot]' }}
+    steps:
+      - uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '17'
+
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Run Go Mod Tidy
+        run: go mod tidy
+
+      - name: Scan
+        # the server and the token are not on the command line
+        env:
+          BLACKDUCK_URL: ${{ secrets.BLACKDUCK_URL }}
+          BLACKDUCK_API_TOKEN: ${{ secrets.BLACKDUCK_API_TOKEN }}
+        run: bash scripts/bd_scan.bash

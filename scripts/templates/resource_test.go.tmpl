@@ -1,0 +1,62 @@
+package package_name_test
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider"
+)
+
+// TODO:
+// Acceptance tests run against a StorageGRID system, see scripts/acctest.sh.
+// Update the configuration and the checks to cover the attributes of the resource.
+// delete these 4 lines
+
+func TestAccGoPrefixResource(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { provider.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: provider.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Create and Read testing
+			{
+				Config: provider.TestAccProviderConfig() + testAccGoPrefixResourceConfig("acc_test"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("netapp-storagegrid_tag_prefix.test", "name", "acc_test"),
+					resource.TestCheckResourceAttrSet("netapp-storagegrid_tag_prefix.test", "id"),
+				),
+			},
+			// ImportState testing
+			{
+				ResourceName:      "netapp-storagegrid_tag_prefix.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					created, ok := state.RootModule().Resources["netapp-storagegrid_tag_prefix.test"]
+					if !ok {
+						return "", fmt.Errorf("netapp-storagegrid_tag_prefix.test is not in the state")
+					}
+					return created.Primary.Attributes["id"] + "," + provider.TestAccProfileName, nil
+				},
+			},
+			// Update and Read testing
+			{
+				Config: provider.TestAccProviderConfig() + testAccGoPrefixResourceConfig("acc_test_renamed"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("netapp-storagegrid_tag_prefix.test", "name", "acc_test_renamed"),
+				),
+			},
+			// Delete testing automatically occurs in TestCase
+		},
+	})
+}
+
+func testAccGoPrefixResourceConfig(name string) string {
+	return fmt.Sprintf(`
+resource "netapp-storagegrid_tag_prefix" "test" {
+  cx_profile_name = %q
+  name            = %q
+}
+`, provider.TestAccProfileName, name)
+}

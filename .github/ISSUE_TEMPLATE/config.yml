@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Terraform StorageGRID Provider Questions
+    url: https://discord.gg/NetApp
+    about: GitHub issues in this repository are only intended for bug reports and feature requests. Other issues will be closed. Please ask and answer questions through the Terraform StorageGRID Provider Discord.

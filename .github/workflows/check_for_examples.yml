@@ -1,0 +1,53 @@
+name: Check Documentation Examples
+
+# Checks that the pages of the resources and of the data sources have an example and a subcategory, and that every
+# resource and data source has its page and its example, and comments the pull request with what is missing.
+# The checks are the ones of scripts/check_docs.sh, which can be run locally.
+on:
+  pull_request:
+    paths:
+      - 'docs/data-sources/*.md'
+      - 'docs/resources/*.md'
+      - 'examples/**'
+      - 'internal/provider/**'
+      - 'scripts/check_docs.sh'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-examples:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Check the examples and the subcategories
+        id: check
+        # the next steps comment the pull request, and fail the job
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./scripts/check_docs.sh 2>&1 | tee docs-check.txt
+
+      # the text of the comment is read from a file: it is not put in the script
+      - name: Comment on the pull request
+        if: steps.check.outcome == 'failure'
+        # a pull request from a fork cannot be commented
+        continue-on-error: true
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('docs-check.txt', 'utf8').trim();
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: 'The documentation is not complete:\n\n```\n' + output + '\n```\n\nRun `python3 scripts/generate_docs.py`, and see CONTRIBUTING.md.',
+            });
+
+      - name: Fail if the documentation is not complete
+        if: steps.check.outcome == 'failure'
+        run: exit 1
