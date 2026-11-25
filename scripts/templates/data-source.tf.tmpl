@@ -1,0 +1,5 @@
+data "netapp-storagegrid_tag_prefix" "tag_prefix" {
+  # required to know which system to interface with
+  cx_profile_name = "example_profile"
+  name            = "testme"
+}

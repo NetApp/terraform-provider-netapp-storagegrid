@@ -1,0 +1,38 @@
+name: Go build
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Check that go.mod and go.sum are tidy
+        run: go mod tidy -diff
+
+      - name: Build
+        run: |
+          export GOFLAGS=-buildvcs=false
+          go build -v ./...
+
+      # the templates of scripts/create_resource.bash and scripts/create_data_source.bash are not compiled with the provider
+      - name: Check the scaffolding templates
+        run: ./scripts/check_scaffold.sh

@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars, and set the values. terraform.tfvars is ignored by git.
+hostname       = "grid-admin.example.com"
+username       = "root"
+password       = "<password of the user of the grid>"
+validate_certs = false
+
+# Only to run the examples of the org_ resources and data sources:
+# tenant_username = "root"
+# tenant_password = "<password of the user of the tenant>"
+# account_id      = "12345678901234567890"

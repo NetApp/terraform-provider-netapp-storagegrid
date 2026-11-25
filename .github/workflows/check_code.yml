@@ -1,0 +1,35 @@
+name: Check TODO Comments
+
+on:
+  pull_request:
+    paths:
+      - '**.go'
+
+permissions:
+  contents: read
+
+jobs:
+  check-todo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # The files created by scripts/create_resource.bash and scripts/create_data_source.bash have TODO comments
+      # where the code must be completed.
+      - name: Check TODO Comments
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          # in its own command, so that the job fails if git fails
+          files=$(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- '*.go')
+          status=0
+          for file in $files; do
+            while IFS=: read -r line _; do
+              echo "::error file=$file,line=$line::TODO comment found: complete the code, and remove the TODO comment."
+              status=1
+            done < <(grep -n 'TODO' "$file" || true)
+          done
+          exit $status

@@ -1,0 +1,45 @@
+package package_name_test
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider"
+)
+
+// TODO:
+// Acceptance tests run against a StorageGRID system, see scripts/acctest.sh.
+// The data source reads a tag_prefix that must exist: create it in the configuration, like this test does when the
+// netapp-storagegrid_tag_prefix resource exists, or use the name of one that exists on your StorageGRID system.
+// delete these 5 lines
+
+func TestAccGoPrefixDataSource(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { provider.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: provider.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: provider.TestAccProviderConfig() + testAccGoPrefixDataSourceConfig("acc_test"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.netapp-storagegrid_tag_prefix.test", "name", "acc_test"),
+					resource.TestCheckResourceAttrSet("data.netapp-storagegrid_tag_prefix.test", "id"),
+				),
+			},
+		},
+	})
+}
+
+func testAccGoPrefixDataSourceConfig(name string) string {
+	return fmt.Sprintf(`
+resource "netapp-storagegrid_tag_prefix" "test" {
+  cx_profile_name = %[1]q
+  name            = %[2]q
+}
+
+data "netapp-storagegrid_tag_prefix" "test" {
+  cx_profile_name = %[1]q
+  name            = netapp-storagegrid_tag_prefix.test.name
+}
+`, provider.TestAccProfileName, name)
+}

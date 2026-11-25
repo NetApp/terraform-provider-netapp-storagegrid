@@ -1,0 +1,250 @@
+package package_name
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/interfaces"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/provider/connection"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// TODO:
+// Add the attributes of the resource to the schema, to the model, to toBody, and to the places that copy the
+// values read from StorageGRID into the model (Read, Create, and Update).  Mark an attribute as sensitive,
+// or as requiring a replacement, when it applies.
+// Remember to register the resource in internal/provider/provider.go.
+// delete these 5 lines
+
+// Ensure provider defined types fully satisfy framework interfaces
+var _ resource.Resource = &GoPrefixResource{}
+var _ resource.ResourceWithImportState = &GoPrefixResource{}
+
+// NewGoPrefixResource is a helper function to simplify the provider implementation.
+func NewGoPrefixResource() resource.Resource {
+	return &GoPrefixResource{
+		config: connection.ResourceOrDataSourceConfig{
+			Name: "tag_prefix",
+		},
+	}
+}
+
+// GoPrefixResource defines the resource implementation.
+type GoPrefixResource struct {
+	config connection.ResourceOrDataSourceConfig
+}
+
+// GoPrefixResourceModel describes the resource data model.
+type GoPrefixResourceModel struct {
+	CxProfileName types.String `tfsdk:"cx_profile_name"`
+	Name          types.String `tfsdk:"name"`
+	ID            types.String `tfsdk:"id"`
+}
+
+// toBody converts the plan into the body of the POST and PUT requests.
+func (m *GoPrefixResourceModel) toBody() interfaces.GoPrefixResourceBodyDataModel {
+	return interfaces.GoPrefixResourceBodyDataModel{
+		Name: m.Name.ValueString(),
+	}
+}
+
+// Metadata returns the resource type name.
+func (r *GoPrefixResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_" + r.config.Name
+}
+
+// Schema defines the schema for the resource.
+func (r *GoPrefixResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		// This description is used by the documentation generator and the language server.
+		MarkdownDescription: "GoPrefix resource",
+
+		Attributes: map[string]schema.Attribute{
+			"cx_profile_name": schema.StringAttribute{
+				MarkdownDescription: "Connection profile name. profile_kind",
+				Required:            true,
+			},
+			"name": schema.StringAttribute{
+				MarkdownDescription: "GoPrefix name",
+				Required:            true,
+			},
+			"id": schema.StringAttribute{
+				MarkdownDescription: "GoPrefix ID, assigned by StorageGRID",
+				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+		},
+	}
+}
+
+// Configure adds the provider configured client to the resource.
+func (r *GoPrefixResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	// Prevent panic if the provider has not been configured.
+	if req.ProviderData == nil {
+		return
+	}
+	config, ok := req.ProviderData.(*connection.Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *connection.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return
+	}
+	r.config.ProviderConfig = config
+}
+
+// Read refreshes the Terraform state with the latest data.
+func (r *GoPrefixResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data GoPrefixResourceModel
+
+	// Read Terraform prior state data into the model
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	errorHandler := utils.NewErrorHandler(ctx, &resp.Diagnostics)
+	// we need to defer setting the client until we can read the connection profile name
+	client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+	if err != nil {
+		// error reporting done inside NewClient
+		return
+	}
+
+	restInfo, err := interfaces.GetGoPrefixByID(errorHandler, client, data.ID.ValueString())
+	if err != nil {
+		// error reporting done inside GetGoPrefixByID
+		return
+	}
+	if restInfo == nil {
+		// it was deleted outside of Terraform: remove it from the state, so that it is created again
+		tflog.Warn(ctx, fmt.Sprintf("tag_prefix %s not found, removing it from the state", data.ID.ValueString()))
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	data.Name = types.StringValue(restInfo.Name)
+
+	// Write logs using the tflog package
+	// Documentation: https://terraform.io/plugin/log
+	tflog.Debug(ctx, fmt.Sprintf("read a resource: %#v", data))
+
+	// Save data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// Create a resource and retrieve its ID
+func (r *GoPrefixResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data GoPrefixResourceModel
+
+	// Read Terraform plan data into the model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	errorHandler := utils.NewErrorHandler(ctx, &resp.Diagnostics)
+	client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+	if err != nil {
+		// error reporting done inside NewClient
+		return
+	}
+
+	created, err := interfaces.CreateGoPrefix(errorHandler, client, data.toBody())
+	if err != nil {
+		// error reporting done inside CreateGoPrefix
+		return
+	}
+
+	data.ID = types.StringValue(created.ID)
+
+	tflog.Trace(ctx, "created a resource")
+
+	// Save data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// Update updates the resource and sets the updated Terraform state on success.
+func (r *GoPrefixResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data GoPrefixResourceModel
+
+	// Read Terraform plan data into the model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	errorHandler := utils.NewErrorHandler(ctx, &resp.Diagnostics)
+	client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+	if err != nil {
+		// error reporting done inside NewClient
+		return
+	}
+
+	// the ID is known: UseStateForUnknown copies it from the state into the plan
+	if _, err := interfaces.UpdateGoPrefix(errorHandler, client, data.ID.ValueString(), data.toBody()); err != nil {
+		// error reporting done inside UpdateGoPrefix
+		return
+	}
+
+	// Save updated data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// Delete deletes the resource and removes the Terraform state on success.
+func (r *GoPrefixResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data GoPrefixResourceModel
+
+	// Read Terraform prior state data into the model
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	errorHandler := utils.NewErrorHandler(ctx, &resp.Diagnostics)
+	client, err := connection.GetRestClient(errorHandler, r.config, data.CxProfileName)
+	if err != nil {
+		// error reporting done inside NewClient
+		return
+	}
+
+	if data.ID.IsNull() || data.ID.ValueString() == "" {
+		_ = errorHandler.MakeAndReportError("ID is missing", "tag_prefix ID is not set in the state")
+		return
+	}
+
+	// error reporting done inside DeleteGoPrefix
+	_ = interfaces.DeleteGoPrefix(errorHandler, client, data.ID.ValueString())
+}
+
+// ImportState imports a resource using the ID from the terraform import command, by calling the Read method.
+// The import identifier is id,cx_profile_name
+func (r *GoPrefixResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	idParts := strings.Split(req.ID, ",")
+
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		resp.Diagnostics.AddError(
+			"Unexpected Import Identifier",
+			fmt.Sprintf("Expected import identifier with format: id,cx_profile_name. Got: %q", req.ID),
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), idParts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("cx_profile_name"), idParts[1])...)
+}

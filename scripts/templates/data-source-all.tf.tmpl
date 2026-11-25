@@ -1,0 +1,8 @@
+data "netapp-storagegrid_tag_all_prefix" "tag_all_prefix" {
+  # required to know which system to interface with
+  cx_profile_name = "example_profile"
+  # optional, to only get the tag_all_prefix that match
+  # filter = {
+  #   name = "testme"
+  # }
+}

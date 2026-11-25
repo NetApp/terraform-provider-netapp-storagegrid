@@ -1,0 +1,148 @@
+package interfaces
+
+import (
+	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/restclient"
+	"github.com/netapp/terraform-provider-netapp-storagegrid/internal/utils"
+)
+
+// TODO:
+// The models below only have the id and the name.  Add the fields of the API: they are documented in the API
+// documentation of the Grid Manager or of the Tenant Manager (help menu).
+// Use the Ansible module of netapp.storagegrid for hints on how the API behaves.
+// delete these 4 lines
+
+// GoPrefixGetDataModel describes the GET data model using go types for mapping.
+type GoPrefixGetDataModel struct {
+	ID   string `mapstructure:"id"`
+	Name string `mapstructure:"name"`
+}
+
+// GoPrefixResourceBodyDataModel describes the POST and PUT body using go types for mapping.
+type GoPrefixResourceBodyDataModel struct {
+	Name string `mapstructure:"name"`
+}
+
+// GoPrefixDataSourceFilterModel describes the filter of the data source that lists the tag_all_prefix.
+// StorageGRID has no generic query filter: the filter is applied on the list returned by the API.
+type GoPrefixDataSourceFilterModel struct {
+	Name string `mapstructure:"name"`
+}
+
+// GetGoPrefixByID to get tag_prefix info.  It returns nil, with no error, if the tag_prefix does not exist.
+func GetGoPrefixByID(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string) (*GoPrefixGetDataModel, error) {
+	api := "api_url/" + id
+	statusCode, response, err := r.GetNilOrObject(api, nil)
+	if err != nil {
+		return nil, errorHandler.MakeAndReportError("error reading tag_prefix info", fmt.Sprintf("error on GET %s: %s, statusCode %d", api, err, statusCode))
+	}
+	if response == nil {
+		return nil, nil
+	}
+
+	var data GoPrefixGetDataModel
+	if err := decode(response, &data); err != nil {
+		return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from GET %s", api),
+			fmt.Sprintf("error: %s, statusCode %d, response %#v", err, statusCode, response))
+	}
+	tflog.Debug(errorHandler.Ctx, fmt.Sprintf("Read tag_prefix: %#v", data))
+	return &data, nil
+}
+
+// GetGoPrefixByName to get tag_prefix info.  An error is reported unless exactly one tag_prefix has this name.
+func GetGoPrefixByName(errorHandler *utils.ErrorHandler, r *restclient.RestClient, name string) (*GoPrefixGetDataModel, error) {
+	found, err := GetAllGoPrefix(errorHandler, r, &GoPrefixDataSourceFilterModel{Name: name})
+	if err != nil {
+		return nil, err
+	}
+	switch len(found) {
+	case 0:
+		return nil, errorHandler.MakeAndReportError("tag_prefix not found", fmt.Sprintf("no tag_prefix with name %q", name))
+	case 1:
+		return &found[0], nil
+	}
+	return nil, errorHandler.MakeAndReportError("tag_prefix is not unique", fmt.Sprintf("%d tag_prefix have the name %q", len(found), name))
+}
+
+// GetAllGoPrefix to get tag_prefix info for all the tag_all_prefix matching a filter
+func GetAllGoPrefix(errorHandler *utils.ErrorHandler, r *restclient.RestClient, filter *GoPrefixDataSourceFilterModel) ([]GoPrefixGetDataModel, error) {
+	api := "api_url"
+	// GetAllObjects follows the pagination of the APIs that have one (limit and marker), and works with the others.
+	// Use GetZeroOrMoreObjects instead if the API has no id in its objects.
+	statusCode, response, err := r.GetAllObjects(api, nil)
+	if err != nil {
+		return nil, errorHandler.MakeAndReportError("error reading tag_all_prefix info", fmt.Sprintf("error on GET %s: %s, statusCode %d", api, err, statusCode))
+	}
+
+	var data []GoPrefixGetDataModel
+	for _, info := range response {
+		var record GoPrefixGetDataModel
+		if err := decode(info, &record); err != nil {
+			return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from GET %s", api),
+				fmt.Sprintf("error: %s, statusCode %d, info %#v", err, statusCode, info))
+		}
+		if filter != nil && filter.Name != "" && record.Name != filter.Name {
+			continue
+		}
+		data = append(data, record)
+	}
+	tflog.Debug(errorHandler.Ctx, fmt.Sprintf("Read tag_all_prefix: %#v", data))
+	return data, nil
+}
+
+// CreateGoPrefix to create tag_prefix.  StorageGRID returns the new object, with its id.
+func CreateGoPrefix(errorHandler *utils.ErrorHandler, r *restclient.RestClient, body GoPrefixResourceBodyDataModel) (*GoPrefixGetDataModel, error) {
+	api := "api_url"
+	var bodyMap map[string]interface{}
+	if err := decode(body, &bodyMap); err != nil {
+		return nil, errorHandler.MakeAndReportError("error encoding tag_prefix body", fmt.Sprintf("error on encoding %s body: %s, body: %#v", api, err, body))
+	}
+	statusCode, response, err := r.CallCreateMethod(api, nil, bodyMap)
+	if err != nil {
+		return nil, errorHandler.MakeAndReportError("error creating tag_prefix", fmt.Sprintf("error on POST %s: %s, statusCode %d", api, err, statusCode))
+	}
+	return decodeGoPrefixResponse(errorHandler, "POST", api, statusCode, response)
+}
+
+// UpdateGoPrefix to update tag_prefix.  StorageGRID replaces the object with the body of the PUT.
+// If the API supports it, and only some of the fields change, use CallPatchMethod instead.
+func UpdateGoPrefix(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string, body GoPrefixResourceBodyDataModel) (*GoPrefixGetDataModel, error) {
+	api := "api_url/" + id
+	var bodyMap map[string]interface{}
+	if err := decode(body, &bodyMap); err != nil {
+		return nil, errorHandler.MakeAndReportError("error encoding tag_prefix body", fmt.Sprintf("error on encoding %s body: %s, body: %#v", api, err, body))
+	}
+	statusCode, response, err := r.CallUpdateMethod(api, nil, bodyMap)
+	if err != nil {
+		return nil, errorHandler.MakeAndReportError("error updating tag_prefix", fmt.Sprintf("error on PUT %s: %s, statusCode %d", api, err, statusCode))
+	}
+	return decodeGoPrefixResponse(errorHandler, "PUT", api, statusCode, response)
+}
+
+// DeleteGoPrefix to delete tag_prefix.  It is not an error if the tag_prefix is already gone.
+func DeleteGoPrefix(errorHandler *utils.ErrorHandler, r *restclient.RestClient, id string) error {
+	api := "api_url/" + id
+	statusCode, _, err := r.CallDeleteMethod(api, nil, nil)
+	if err != nil && !restclient.IsNotFound(err) {
+		return errorHandler.MakeAndReportError("error deleting tag_prefix", fmt.Sprintf("error on DELETE %s: %s, statusCode %d", api, err, statusCode))
+	}
+	return nil
+}
+
+// decodeGoPrefixResponse reads the object returned by a POST or a PUT.
+func decodeGoPrefixResponse(errorHandler *utils.ErrorHandler, method string, api string, statusCode int, response restclient.RestResponse) (*GoPrefixGetDataModel, error) {
+	object, ok := response.Object()
+	if !ok {
+		return nil, errorHandler.MakeAndReportError(fmt.Sprintf("unexpected response from %s %s", method, api),
+			fmt.Sprintf("expected an object, statusCode %d, response %#v", statusCode, response.Data))
+	}
+	var data GoPrefixGetDataModel
+	if err := decode(object, &data); err != nil {
+		return nil, errorHandler.MakeAndReportError(fmt.Sprintf("failed to decode response from %s %s", method, api),
+			fmt.Sprintf("error: %s, statusCode %d, response %#v", err, statusCode, object))
+	}
+	tflog.Debug(errorHandler.Ctx, fmt.Sprintf("%s %s: %#v", method, api, data))
+	return &data, nil
+}

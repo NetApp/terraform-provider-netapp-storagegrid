@@ -1,0 +1,41 @@
+name: Go Report Card
+
+on:
+  push:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+  pull_request:
+    branches:
+      - "main"
+      - "integration/main"
+      - "stable*"
+
+permissions:
+  contents: read
+
+jobs:
+  reportcard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # goreportcard is built from a commit that was read, and not from whatever the master branch is at the time:
+      # its make install only installs the tools that it has in its own vendor directory.
+      - name: Set up goreportcard
+        working-directory: ${{ runner.temp }}
+        run: |
+          git clone https://github.com/gojp/goreportcard.git
+          cd goreportcard
+          git checkout --quiet af15decf135bcd0a1bfa12180d027bdeb19f601c
+          make install
+          go install ./cmd/goreportcard-cli
+
+      - name: Run report card
+        run: goreportcard-cli -v -t 90

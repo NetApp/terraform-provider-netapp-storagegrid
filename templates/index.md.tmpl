@@ -1,0 +1,37 @@
+---
+page_title: "{{.ProviderShortName}} Provider"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.ProviderShortName}} Provider
+
+{{ .Description | trimspace }}
+You must configure the provider with the proper credentials before you can use it.
+
+Use the navigation to the left to read about the available resources and data sources.
+
+To learn the basics of Terraform using this provider, follow the [getting started guide](guides/getting-started).
+
+## Grid and tenant connection profiles
+
+A connection profile defines how to reach and sign in to StorageGRID. Resources and data sources select a profile with
+`cx_profile_name`.
+
+* A profile without `account_id` signs in to the grid, and uses the Grid Management API.
+  It is used by the resources and data sources whose name starts with `grid_`, for instance `netapp-storagegrid_grid_product_version`.
+* A profile with the `account_id` of a tenant signs in to this tenant, and uses the Tenant Management API.
+  It is used by the resources and data sources whose name starts with `org_`.
+
+## Supported Platforms
+
+* StorageGRID with the management API v4 (StorageGRID 11.8 or later), or v3 (earlier releases). The provider selects the version of the API from the version of StorageGRID, `api_version` of the connection profile can force it.
+* The provider only connects with HTTPS.
+
+{{ if .HasExample -}}
+## Example Usage
+
+{{ tffile .ExampleFile }}
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
